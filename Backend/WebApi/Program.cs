@@ -1,5 +1,4 @@
-
-namespace WebApi
+namespace SubredditStats.Backend.WebApi
 {
     public class Program
     {

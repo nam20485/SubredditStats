@@ -1,4 +1,4 @@
-﻿namespace ConsoleClient
+﻿namespace SubredditStats.Frontend.ConsoleClient
 {
     internal class Program
     {
