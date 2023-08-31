@@ -16,10 +16,22 @@ namespace SubredditStats.Backend.WebApi.Controllers
             _redditApiClient = new RedditStatsApiClient();
         }
 
-        [HttpGet("mostupvotedposts/{subreddit}")]
-        public async Task<ActionResult<RedditPostListing?>> GetMostUpvotedPostsAsync([FromRoute] string subreddit)
+        [HttpGet("top_posts/{subreddit}")]
+        public async Task<ActionResult<RedditPostListing?>> GetSubredditTopPosts([FromRoute] string subreddit)
         {
-            return await _redditApiClient.GetMostUpvotedPosts(subreddit);
+            return await _redditApiClient.GetSubredditTopPosts(subreddit);
+        }
+
+        [HttpGet("new_posts/{subreddit}")]
+        public async Task<ActionResult<RedditPostListing?>> GetSubredditNewPosts([FromRoute] string subreddit)
+        {
+            return await _redditApiClient.GetSubredditNewPosts(subreddit);
+        }
+
+        [HttpGet("posts/{subreddit}/{sort}")]
+        public async Task<ActionResult<RedditPostListing?>> GetSubredditNewPosts([FromRoute] string subreddit, [FromRoute] RedditStatsApiClient.PostListingSortType sort)
+        {
+            return await _redditApiClient.FetchSubredditPostListing(subreddit, sort);
         }
     }
 }
