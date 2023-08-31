@@ -71,7 +71,11 @@ namespace SubredditStats.Shared.Model
         public bool is_created_from_ads_ui { get; set; }
         public bool author_premium { get; set; }
         public string thumbnail { get; set; }
-        public bool edited { get; set; }
+
+        // read 'edited' as an object since possible values seen include floats and booleans
+        // i.e. 1617227700.0 and false (seems to be false if not edited, otherwise the epoch time of its last edit)
+        // JSON deserializer chokes on it...
+        public object edited { get; set; }
         public object author_flair_css_class { get; set; }
         public object[] author_flair_richtext { get; set; }
         public Gildings gildings { get; set; }
