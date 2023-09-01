@@ -15,6 +15,16 @@ namespace SubredditStats.Shared.Model
         public string Author { get; set; }
         public string ApiName { get; set; }
 
+        public TopPostInfo()
+        {
+            PostTitle = string.Empty;
+            PostUrl = string.Empty;
+            Subreddit = string.Empty;
+            Author = string.Empty;
+            ApiName = string.Empty;
+            UpVotes = -1;
+        }
+
         public class StringDictionary : Dictionary<string, TopPostInfo>
         {
             public StringDictionary() : base() { }

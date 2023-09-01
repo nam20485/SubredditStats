@@ -10,7 +10,14 @@ namespace SubredditStats.Shared.Model
     {
         public string Username { get; set; }
         public int PostCount { get; set; }
-        public string Subreddit { get; set; }        
+        public string Subreddit { get; set; }
+        
+        public MostPosterInfo()
+        {
+            Subreddit = string.Empty;
+            Username = string.Empty;
+            PostCount = -1;
+        }
 
         public class StringDictionary : Dictionary<string, MostPosterInfo>
         {
