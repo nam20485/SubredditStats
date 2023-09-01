@@ -13,6 +13,7 @@ namespace SubredditStats.Backend.Lib.Store
         private readonly MostPosterInfo.List _mostPosterInfos;
         private readonly TopPostInfo.List _topPostInfos;
 
+        // basic concurrency synchronization
         private readonly object _mostPostersLock;
         private readonly object _topPostsLock;
 
