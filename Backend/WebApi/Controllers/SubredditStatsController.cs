@@ -20,7 +20,7 @@ namespace SubredditStats.Backend.WebApi.Controllers
             _store = store;
         }
 
-        [HttpGet("top_post")]
+        [HttpGet("top_posts")]
         public TopPostInfo[] GetTopPosts()
         {
             return _store.TopPosts;
