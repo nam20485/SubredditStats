@@ -28,7 +28,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
         private const string SubredditPostListingUriFormat = RedditApiAuth.ApiUri + "/r/{0}/{1}";
 
         private readonly IHttpClientFactory? _httpClientFactory;
-        //private readonly ILogger<RedditStatsApiClient> _logger;
+        private readonly ILogger<RedditStatsApiClient> _logger;
 
         private readonly HttpClient _httpClient;
 
@@ -39,9 +39,9 @@ namespace SubredditStats.Backend.Lib.RedditApi
         // number of seconds remaining until new period starts
         public int RateLimitReset { get; private set; }
 
-        public RedditStatsApiClient(HttpClient httpClient)
+        public RedditStatsApiClient(HttpClient httpClient, ILogger<RedditStatsApiClient> logger)
         {
-            //_logger = logger;
+            _logger = logger;
             _httpClient = httpClient;
             //_httpClientFactory = httpClientFactory;
             _currentAccessToken = null;
@@ -52,7 +52,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             var httpClient = await CreateHttpClientAsync();
             if (httpClient is not null)
             {
-                var uri = string.Format(SubredditPostListingUriFormat, subreddit, sort.ToString());
+                var uri = string.Format(SubredditPostListingUriFormat, subreddit, Enum.GetName<PostListingSortType>(sort));
                 var response = await httpClient.GetAsync(uri);
                 GetRateLimitValues(response);
                 if (response.IsSuccessStatusCode)
@@ -66,6 +66,17 @@ namespace SubredditStats.Backend.Lib.RedditApi
             return null;
         }
 
+        public async Task<RedditPostListing?> GetSubredditPostsSortedByTop(string subreddit)
+        {
+            return await FetchSubredditPostListing(subreddit, PostListingSortType.top);
+        }
+
+        public async Task<RedditPostListing?> GetSubredditPostsSortedByNew(string subreddit)
+        {
+            return await FetchSubredditPostListing(subreddit, PostListingSortType.@new);
+        }
+
+
         private void GetRateLimitValues(HttpResponseMessage response)
         {
             var rateLimitUsedHeader = response.Headers.GetValues("X-Ratelimit-Used");
@@ -75,17 +86,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             var rateLimitResetHeader = response.Headers.GetValues("X-Ratelimit-Reset");
             RateLimitReset = int.Parse(rateLimitResetHeader.First());
         }
-
-        public async Task<RedditPostListing?> GetSubredditTopPosts(string subreddit)
-        {
-            return await FetchSubredditPostListing(subreddit, PostListingSortType.top);
-        }
-
-        public async Task<RedditPostListing?> GetSubredditNewPosts(string subreddit)
-        {
-            return await FetchSubredditPostListing(subreddit, PostListingSortType.@new);
-        }
-
+        
         // returning HTTP 403 Forbidden (probably requires mod persmission)
         public async Task<string> GetAboutContributors(string subreddit)
         {
@@ -103,7 +104,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
 
                 }
             }
-            return null;
+            return "";
         }
 
         private async Task<HttpClient?> CreateHttpClientAsync()
