@@ -8,20 +8,15 @@ namespace SubredditStats.Shared.Model
 {
     public class TopPostInfo
     {
-        public string PostTitle { get; set; }
+        public string? PostTitle { get; set; }
         public int UpVotes { get; set; }
-        public string PostUrl { get; set; }        
-        public string Subreddit { get; set; }
-        public string Author { get; set; }
-        public string ApiName { get; set; }
+        public string? PostUrl { get; set; }        
+        public string? Subreddit { get; set; }
+        public string? Author { get; set; }
+        public string? ApiName { get; set; }
 
         public TopPostInfo()
         {
-            PostTitle = string.Empty;
-            PostUrl = string.Empty;
-            Subreddit = string.Empty;
-            Author = string.Empty;
-            ApiName = string.Empty;
             UpVotes = -1;
         }
 
