@@ -22,50 +22,46 @@ namespace SubredditStats.Backend.Lib.RedditApi
             top,
             @new
         }
-
-        public const string HttpClientName = "RedditStatsApiClient";
-
-        private const string SubredditPostListingUriFormat = RedditApiAuth.ApiUri + "/r/{0}/{1}";
-
-        private readonly IHttpClientFactory? _httpClientFactory;
-        private readonly ILogger<RedditStatsApiClient> _logger;
-
+        
+        private const string SubredditPostListingUriFormat = RedditApi.ApiUri + "/r/{0}/{1}";     
+        
+        private readonly IRedditApiTokenService _apiTokenService;
         private readonly HttpClient _httpClient;
+        private readonly ILogger<RedditStatsApiClient> _logger;        
 
-        private RedditApiToken? _currentAccessToken;
-
-        public double RateLimitUsed { get; private set; }
-        public double RateLimitRemaining { get; private set; }
+        public double LastRateLimitUsed { get; private set; }
+        public double LastRateLimitRemaining { get; private set; }
         // number of seconds remaining until new period starts
-        public int RateLimitReset { get; private set; }
+        public int LastRateLimitReset { get; private set; }
 
-        public RedditStatsApiClient(HttpClient httpClient, ILogger<RedditStatsApiClient> logger)
-        {
-            _logger = logger;
+        public RedditStatsApiClient(HttpClient httpClient, ILogger<RedditStatsApiClient> logger, IRedditApiTokenService apiTokenService)
+        {           
+            _logger = logger;            
+            _apiTokenService = apiTokenService;
             _httpClient = httpClient;
-            //_httpClientFactory = httpClientFactory;
-            _currentAccessToken = null;
+
+            _httpClient.BaseAddress = new Uri(RedditApi.ApiUri);
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(RedditApi.UserAgentName, RedditApi.UserAgentVersion));            
         }
 
         public async Task<RedditPostListing?> FetchSubredditPostListing(string subreddit, PostListingSortType sort)
         {
-            var httpClient = await CreateHttpClientAsync();
-            if (httpClient is not null)
-            {
-                var uri = string.Format(SubredditPostListingUriFormat, subreddit, Enum.GetName<PostListingSortType>(sort));
-                var response = await httpClient.GetAsync(uri);
-                GetRateLimitValues(response);
-                if (response.IsSuccessStatusCode)
-                {
-                    var s = await response.Content.ReadAsStringAsync();
-                    var redditPostListing = JsonSerializer.Deserialize<RedditPostListing>(s);
-                    return redditPostListing;
+            var accessToken = await _apiTokenService.GetRedditApiAccessToken();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.AccessToken);
 
-                }
+            var uri = string.Format(SubredditPostListingUriFormat, subreddit, Enum.GetName<PostListingSortType>(sort));
+            var response = await _httpClient.GetAsync(uri);
+            GetRateLimitValues(response);
+            if (response.IsSuccessStatusCode)
+            {
+                var s = await response.Content.ReadAsStringAsync();
+                var redditPostListing = JsonSerializer.Deserialize<RedditPostListing>(s);
+                return redditPostListing;
             }
+            
             return null;
         }
-
+        
         public async Task<RedditPostListing?> GetSubredditPostsSortedByTop(string subreddit)
         {
             return await FetchSubredditPostListing(subreddit, PostListingSortType.top);
@@ -80,47 +76,32 @@ namespace SubredditStats.Backend.Lib.RedditApi
         private void GetRateLimitValues(HttpResponseMessage response)
         {
             var rateLimitUsedHeader = response.Headers.GetValues("X-Ratelimit-Used");
-            RateLimitUsed = double.Parse(rateLimitUsedHeader.First());
+            LastRateLimitUsed = double.Parse(rateLimitUsedHeader.First());
             var rateLimitRemainingdHeader = response.Headers.GetValues("X-Ratelimit-Remaining");
-            RateLimitRemaining = double.Parse(rateLimitRemainingdHeader.First());
+            LastRateLimitRemaining = double.Parse(rateLimitRemainingdHeader.First());
             var rateLimitResetHeader = response.Headers.GetValues("X-Ratelimit-Reset");
-            RateLimitReset = int.Parse(rateLimitResetHeader.First());
+            LastRateLimitReset = int.Parse(rateLimitResetHeader.First());
         }
         
-        // returning HTTP 403 Forbidden (probably requires mod persmission)
-        public async Task<string> GetAboutContributors(string subreddit)
-        {
-            using var httpClient = await CreateHttpClientAsync();
-            if (httpClient is not null)
-            {
-                //var redditPostListing = await httpClient.GetFromJsonAsync<RedditPostListing>($"https://oauth.reddit.com/r/{subreddit}/top");
-                //return redditPostListing;
-                var response = await httpClient.GetAsync($"https://oauth.reddit.com/r/{subreddit}/about/contributors");
-                if (response.IsSuccessStatusCode)
-                {
-                    var s = await response.Content.ReadAsStringAsync();
-                    //var redditPostListing = JsonSerializer.Deserialize<RedditPostListing>(s, GlobalJsonSerializerOptions.Options);
-                    return s;
+        //// returning HTTP 403 Forbidden (probably requires mod persmission)
+        //public async Task<string> GetAboutContributors(string subreddit)
+        //{
+        //    var accessToken = await _apiTokenService.GetRedditApiAccessToken();
+        //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.AccessToken);
+        //    if (httpClient is not null)
+        //    {
+        //        //var redditPostListing = await httpClient.GetFromJsonAsync<RedditPostListing>($"https://oauth.reddit.com/r/{subreddit}/top");
+        //        //return redditPostListing;
+        //        var response = await httpClient.GetAsync($"https://oauth.reddit.com/r/{subreddit}/about/contributors");
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var s = await response.Content.ReadAsStringAsync();
+        //            //var redditPostListing = JsonSerializer.Deserialize<RedditPostListing>(s, GlobalJsonSerializerOptions.Options);
+        //            return s;
 
-                }
-            }
-            return "";
-        }
-
-        private async Task<HttpClient?> CreateHttpClientAsync()
-        {
-            if (_currentAccessToken == null || _currentAccessToken.IsExpired)
-            {
-                _currentAccessToken = await RedditApiAuth.FetchAccessToken();
-            }
-
-            if (_currentAccessToken is null) return null;
-
-            var client = _httpClient;
-            //_httpClientFactory.CreateClient(HttpClientName);
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(RedditApiAuth.UserAgent, "0.9"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _currentAccessToken.AccessToken);
-            return client;
-        }
+        //        }
+        //    }
+        //    return "";
+        //}       
     }
 }

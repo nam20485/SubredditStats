@@ -15,18 +15,17 @@ namespace SubredditStats.Backend.WebApi
             // Add services to the container.
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
-                // add ability to directly use & parse enums in the endpoint definitions
+                // add ability to directly use & parse enums in the endpoint parameters
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            });            
+            });       
+            // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddHttpClient("RedditStatsApiClient", client =>
-            {
-                client.BaseAddress = new Uri(RedditApiAuth.ApiUri);
-            });
-            builder.Services.AddHttpClient<IRedditStatsClient, RedditStatsApiClient>("RedditStatsApiClient");
-
+            // add our custom services to the DI container (separate functionality is implemented
+            // in its own service to reduce coupling and increase cohesion & encapsulation)
+            builder.Services.AddHttpClient<IRedditApiTokenService, RedditApiTokenService>();
+            builder.Services.AddHttpClient<IRedditStatsClient, RedditStatsApiClient>();
             builder.Services.AddSingleton<ISubredditPostsStatsStore, MemoryStore>();            
             builder.Services.AddHostedService<SubredditPostsStatsCalculator>();
 
