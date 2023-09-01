@@ -25,7 +25,7 @@ namespace SubredditStats.Backend.WebApi
             {
                 client.BaseAddress = new Uri(RedditApiAuth.ApiUri);
             });
-            builder.Services.AddHttpClient<IRedditStatsApiClient, RedditStatsApiClient>("RedditStatsApiClient");
+            builder.Services.AddHttpClient<IRedditStatsClient, RedditStatsApiClient>("RedditStatsApiClient");
 
             builder.Services.AddSingleton<ISubredditPostsStatsStore, MemoryStore>();            
             builder.Services.AddHostedService<SubredditPostsStatsCalculator>();

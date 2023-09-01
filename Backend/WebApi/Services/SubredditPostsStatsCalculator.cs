@@ -16,7 +16,7 @@ namespace SubredditStats.Backend.WebApi.Services
 {
     public class SubredditPostsStatsCalculator : BackgroundService
     {
-        private readonly IRedditStatsApiClient _apiClient;
+        private readonly IRedditStatsClient _apiClient;
         private readonly ISubredditPostsStatsStore _backingStore;
         private readonly IConfiguration? _config;
 
@@ -28,7 +28,7 @@ namespace SubredditStats.Backend.WebApi.Services
         public MostPosterInfo[] MostPosters => _backingStore.MostPosters;
         public TopPostInfo[] TopPosts => _backingStore.TopPosts;
 
-        public SubredditPostsStatsCalculator(ISubredditPostsStatsStore store, IRedditStatsApiClient apiClient, IConfiguration config)
+        public SubredditPostsStatsCalculator(ISubredditPostsStatsStore store, IRedditStatsClient apiClient, IConfiguration config)
         {
             _backingStore = store;
             _apiClient = apiClient;
@@ -37,7 +37,7 @@ namespace SubredditStats.Backend.WebApi.Services
             Subreddit = _config?["SubredditName"];
             if (string.IsNullOrWhiteSpace(Subreddit))
             {
-                throw new InvalidOperationException("Subreddit cannot be null or whitespace (not found in appsettings.json)");
+                throw new InvalidOperationException("Subreddit cannot be null or whitespace (value not found in appsettings.json?)");
             }
 
             _started = DateTime.UtcNow;

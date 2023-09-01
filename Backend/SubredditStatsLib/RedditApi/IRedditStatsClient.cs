@@ -2,7 +2,7 @@
 
 namespace SubredditStats.Backend.Lib.RedditApi
 {
-    public interface IRedditStatsApiClient
+    public interface IRedditStatsClient
     {
         Task<RedditPostListing?> FetchSubredditPostListing(string subreddit, RedditStatsApiClient.PostListingSortType sort);
         Task<string> GetAboutContributors(string subreddit);

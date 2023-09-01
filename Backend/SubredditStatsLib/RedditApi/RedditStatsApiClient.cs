@@ -15,7 +15,7 @@ using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.Lib.RedditApi
 {
-    public class RedditStatsApiClient : IRedditStatsApiClient
+    public class RedditStatsApiClient : IRedditStatsClient
     {
         public enum PostListingSortType
         {
