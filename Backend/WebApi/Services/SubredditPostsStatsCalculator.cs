@@ -41,13 +41,7 @@ namespace SubredditStats.Backend.WebApi.Services
             _started = DateTime.UtcNow;
             _cancel = new CancellationToken();
         }
-
-        //public async Task StartCalculatingAsync(CancellationToken stoppingToken)
-        //{
-        //    //await Task.Run<(CalculateStatsAsync, _cancel);            
-        //    await Task.Factory.StartNew<Task>();
-        //}
-
+      
         public async Task CalculateStatsAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
@@ -67,12 +61,6 @@ namespace SubredditStats.Backend.WebApi.Services
                             UpVotes = post.data.ups,
                             PostUrl = post.data.url
                         });
-
-                        // cancel asap if requested
-                        if (stoppingToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
                     }
 
                     _backingStore.AddTopPosts(topPostInfos);

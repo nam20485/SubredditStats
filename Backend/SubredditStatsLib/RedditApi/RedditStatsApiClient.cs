@@ -72,7 +72,6 @@ namespace SubredditStats.Backend.Lib.RedditApi
             return await FetchSubredditPostListing(subreddit, PostListingSortType.@new);
         }
 
-
         private void GetRateLimitValues(HttpResponseMessage response)
         {
             var rateLimitUsedHeader = response.Headers.GetValues("X-Ratelimit-Used");
