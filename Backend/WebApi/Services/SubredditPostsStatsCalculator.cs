@@ -16,8 +16,7 @@ namespace SubredditStats.Backend.WebApi.Services
         private readonly ISubredditPostsStatsStore _backingStore;
         private readonly IConfiguration? _config;
 
-        private readonly DateTime _started;
-        private readonly CancellationToken _cancel;
+        private readonly DateTime _started;        
 
         public string Subreddit { get; }
 
@@ -38,8 +37,7 @@ namespace SubredditStats.Backend.WebApi.Services
                 throw new InvalidOperationException("Subreddit cannot be null or whitespace (value not found in appsettings.json?)");
             }
 
-            _started = DateTime.UtcNow;
-            _cancel = new CancellationToken();
+            _started = DateTime.UtcNow;            
         }
       
         public async Task CalculateStatsAsync(CancellationToken stoppingToken)
@@ -59,7 +57,8 @@ namespace SubredditStats.Backend.WebApi.Services
                             Subreddit = post.data.subreddit,
                             Author = post.data.author,
                             UpVotes = post.data.ups,
-                            PostUrl = post.data.url
+                            PostUrl = post.data.url,
+                            ApiName = post.data.name
                         });
                     }
 
