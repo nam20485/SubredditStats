@@ -21,11 +21,15 @@ namespace SubredditStats.Backend.Lib.RedditApi
         [JsonPropertyName("scope")]
         public string Scope { get; set; }
 
+
         [JsonIgnore]
         public DateTime RetrievedAt { get; set; } = DateTime.UtcNow;
 
         [JsonIgnore]
-        public DateTime ExpiresAt => RetrievedAt.AddSeconds(ExpiresInS);
+        public TimeSpan Duration => new(0, 0, ExpiresInS);
+
+        [JsonIgnore]
+        public DateTime ExpiresAt => RetrievedAt.Add(Duration);
 
         [JsonIgnore]
         public bool IsExpired => ExpiresAt <= DateTime.UtcNow;
