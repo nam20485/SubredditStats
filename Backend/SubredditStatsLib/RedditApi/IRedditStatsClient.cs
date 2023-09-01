@@ -5,8 +5,8 @@ namespace SubredditStats.Backend.Lib.RedditApi
     public interface IRedditStatsClient
     {
         Task<RedditPostListing?> FetchSubredditPostListing(string subreddit, RedditStatsApiClient.PostListingSortType sort);
-        Task<string> GetAboutContributors(string subreddit);
-        Task<RedditPostListing?> GetSubredditNewPosts(string subreddit);
-        Task<RedditPostListing?> GetSubredditTopPosts(string subreddit);
+        //Task<string> GetAboutContributors(string subreddit);
+        Task<RedditPostListing?> GetSubredditPostsSortedByNew(string subreddit);
+        Task<RedditPostListing?> GetSubredditPostsSortedByTop(string subreddit);
     }
 }
