@@ -8,7 +8,7 @@ using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.Lib.Store
 {
-    public class MemoryBackingStore : ISubredditPostsStatsStore
+    public class MemoryStore : ISubredditPostsStatsStore
     {
         private readonly MostPosterInfo.List _mostPosterInfos;
         private readonly TopPostInfo.List _topPostInfos;
@@ -16,7 +16,7 @@ namespace SubredditStats.Backend.Lib.Store
         private readonly object _mostPostersLock;
         private readonly object _topPostsLock;
 
-        public MemoryBackingStore()
+        public MemoryStore()
         {
             _mostPostersLock = new();
             _topPostsLock = new();

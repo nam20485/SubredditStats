@@ -27,7 +27,7 @@ namespace SubredditStats.Backend.WebApi
             });
             builder.Services.AddHttpClient<IRedditStatsApiClient, RedditStatsApiClient>("RedditStatsApiClient");
 
-            builder.Services.AddSingleton<ISubredditPostsStatsStore, MemoryBackingStore>();            
+            builder.Services.AddSingleton<ISubredditPostsStatsStore, MemoryStore>();            
             builder.Services.AddHostedService<SubredditPostsStatsCalculator>();
 
             var app = builder.Build();   
