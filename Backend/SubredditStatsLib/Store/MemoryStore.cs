@@ -10,8 +10,8 @@ namespace SubredditStats.Backend.Lib.Store
 {
     public class MemoryStore : ISubredditPostsStatsStore
     {
-        private readonly MostPosterInfo.List _mostPosterInfos;
-        private readonly TopPostInfo.List _topPostInfos;
+        private readonly MostPosterInfo.StringDictionary _mostPosterInfosByUsername;
+        private readonly TopPostInfo.StringDictionary _topPostInfosByApiName;
 
         // basic concurrency synchronization
         private readonly object _mostPostersLock;
@@ -22,8 +22,8 @@ namespace SubredditStats.Backend.Lib.Store
             _mostPostersLock = new();
             _topPostsLock = new();
 
-            _mostPosterInfos = new();
-            _topPostInfos = new();
+            _mostPosterInfosByUsername = new();
+            _topPostInfosByApiName = new();
         }
 
         public MostPosterInfo[] MostPosters
@@ -32,7 +32,7 @@ namespace SubredditStats.Backend.Lib.Store
             {
                 lock (_mostPostersLock)
                 {
-                    return _mostPosterInfos.ToArray();
+                    return _mostPosterInfosByUsername.Values.ToArray();
                 }
             }
         }
@@ -43,7 +43,7 @@ namespace SubredditStats.Backend.Lib.Store
             {
                 lock (_topPostsLock)
                 {
-                    return _topPostInfos.ToArray();
+                    return _topPostInfosByApiName.Values.ToArray();
                 }
             }
         }
@@ -52,7 +52,10 @@ namespace SubredditStats.Backend.Lib.Store
         {
             lock (_mostPostersLock)
             {
-                _mostPosterInfos.AddRange(mostPosters);
+                foreach (var mostPoster in mostPosters)
+                {
+                    _mostPosterInfosByUsername[mostPoster.Username] = mostPoster;
+                }
             }
         }
 
@@ -60,7 +63,10 @@ namespace SubredditStats.Backend.Lib.Store
         {
             lock (_topPostsLock)
             {
-                _topPostInfos.AddRange(topPosts);
+                foreach (var topPost in topPosts)
+                {
+                    _topPostInfosByApiName[topPost.ApiName] = topPost;
+                }
             }
         }
     }
