@@ -6,18 +6,22 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Logging;
+
 namespace SubredditStats.Backend.Lib.RedditApi
 {
     public class RedditApiTokenService : IRedditApiTokenService
     {
         private readonly HttpClient _httpClient;
+        private readonly ILogger<RedditApiTokenService> _logger;
 
         private RedditApiToken? _currentAccessToken;
 
-        public RedditApiTokenService(HttpClient httpClient)
+        public RedditApiTokenService(HttpClient httpClient, ILogger<RedditApiTokenService> logger)
         {
             _currentAccessToken = null;
             _httpClient = httpClient;
+            _logger = logger;
 
             _httpClient.BaseAddress = new Uri(RedditApi.TokenUrl);
         }
@@ -48,7 +52,9 @@ namespace SubredditStats.Backend.Lib.RedditApi
             var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                apiToken = await response.Content.ReadFromJsonAsync<RedditApiToken>();                
+                apiToken = await response.Content.ReadFromJsonAsync<RedditApiToken>();
+
+                _logger.LogInformation($"Fetched new access token: expires in {apiToken.Duration}");
             }
 
             return apiToken;
