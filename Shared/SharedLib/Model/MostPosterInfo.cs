@@ -10,14 +10,18 @@ namespace SubredditStats.Shared.Model
     {
         public string Username { get; set; }
         public int PostCount { get; set; }
-        public string Subreddit { get; set; }
-        
+        public string Subreddit { get; set; }        
+
+        public class StringDictionary : Dictionary<string, MostPosterInfo>
+        {
+            public StringDictionary() : base() { }
+            public StringDictionary(StringDictionary collection) : base(collection) { }
+        }
+
         public class List : List<MostPosterInfo>
         {
             public List() : base()  { }
-            public List(IEnumerable<MostPosterInfo> collection) : base(collection)  { }
-            public List(int capacity) : base(capacity)  { }
-        }   
-
+            public List(IEnumerable<MostPosterInfo> collection) : base(collection)  { }            
+        }           
     }
 }

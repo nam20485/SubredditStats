@@ -13,12 +13,18 @@ namespace SubredditStats.Shared.Model
         public string PostUrl { get; set; }        
         public string Subreddit { get; set; }
         public string Author { get; set; }
+        public string ApiName { get; set; }
+
+        public class StringDictionary : Dictionary<string, TopPostInfo>
+        {
+            public StringDictionary() : base() { }
+            public StringDictionary(StringDictionary collection) : base(collection) { }
+        }
 
         public class List : List<TopPostInfo>
         {
             public List() : base() { }
-            public List(IEnumerable<TopPostInfo> collection) : base(collection) { }
-            public List(int capacity) : base(capacity) { }
-        }   
+            public List(IEnumerable<TopPostInfo> collection) : base(collection) { }            
+        }        
     }
 }
