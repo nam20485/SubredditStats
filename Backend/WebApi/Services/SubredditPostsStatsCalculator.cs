@@ -4,12 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-
 using SubredditStats.Backend.Lib.RedditApi;
 using SubredditStats.Backend.Lib.Store;
-using SubredditStats.Shared;
 using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.WebApi.Services
@@ -28,7 +24,9 @@ namespace SubredditStats.Backend.WebApi.Services
         public MostPosterInfo[] MostPosters => _backingStore.MostPosters;
         public TopPostInfo[] TopPosts => _backingStore.TopPosts;
 
-        public SubredditPostsStatsCalculator(ISubredditPostsStatsStore store, IRedditStatsClient apiClient, IConfiguration config)
+        public SubredditPostsStatsCalculator(ISubredditPostsStatsStore store,
+                                             IRedditStatsClient apiClient,
+                                             IConfiguration config)
         {
             _backingStore = store;
             _apiClient = apiClient;
@@ -54,7 +52,7 @@ namespace SubredditStats.Backend.WebApi.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {               
-                var topPostListings = await _apiClient.GetSubredditTopPosts(Subreddit);
+                var topPostListings = await _apiClient.GetSubredditPostsSortedByTop(Subreddit);
                 if (topPostListings is not null)
                 {
                     var topPostInfos = new TopPostInfo.List();
@@ -67,7 +65,14 @@ namespace SubredditStats.Backend.WebApi.Services
                             Subreddit = post.data.subreddit,
                             Author = post.data.author,
                             UpVotes = post.data.ups,
+                            PostUrl = post.data.url
                         });
+
+                        // cancel asap if requested
+                        if (stoppingToken.IsCancellationRequested)
+                        {
+                            return;
+                        }
                     }
 
                     _backingStore.AddTopPosts(topPostInfos);
