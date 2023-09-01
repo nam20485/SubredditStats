@@ -8,9 +8,9 @@ using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.Lib.Store
 {
-    public class DatabaseBackingStore : ISubredditPostsStatsStore
+    public class DatabaseStore : ISubredditPostsStatsStore
     {
-        // use Entity Framework to store the data in a database
+        // e.g. use Entity Framework to store and fetch the data from a database
 
         public MostPosterInfo[] MostPosters => throw new NotImplementedException();
 
