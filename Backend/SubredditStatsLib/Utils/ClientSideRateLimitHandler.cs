@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.RateLimiting;
 
 
-namespace SubredditStats.Backend.Lib
+namespace SubredditStats.Backend.Lib.Utils
 {
     // taken from: https://learn.microsoft.com/en-us/dotnet/core/extensions/http-ratelimiter
 
