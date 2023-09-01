@@ -41,7 +41,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             _httpClient = httpClient;
 
             _httpClient.BaseAddress = new Uri(RedditApi.ApiUri);
-            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(RedditApi.UserAgentName, RedditApi.UserAgentVersion));            
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(RedditApi.MakeUserAgentHeader());
         }
 
         public async Task<RedditPostListing?> FetchSubredditPostListing(string subreddit, PostListingSortType sort)

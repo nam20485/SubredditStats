@@ -39,7 +39,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             var request = new HttpRequestMessage(HttpMethod.Post, RedditApi.TokenUrl);
             var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{RedditApi.ClientId}:{RedditApi.ClientSecret}"));
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
-            request.Headers.UserAgent.Add(new ProductInfoHeaderValue(RedditApi.UserAgentName, RedditApi.UserAgentVersion));
+            request.Headers.UserAgent.Add(RedditApi.MakeUserAgentHeader());
             request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 {"grant_type", "client_credentials"}

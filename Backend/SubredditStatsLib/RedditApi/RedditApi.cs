@@ -12,14 +12,16 @@ namespace SubredditStats.Backend.Lib.RedditApi
     public class RedditApi
     {
         public static string? ClientId => Environment.GetEnvironmentVariable("REDDIT_API_CLIENT_ID");
-        public static string? ClientSecret => Environment.GetEnvironmentVariable("REDDIT_API_CLIENT_SECRET");
-        public static string AppName => "subrpoststats";        
+        public static string? ClientSecret => Environment.GetEnvironmentVariable("REDDIT_API_CLIENT_SECRET");        
 
         public const string TokenUrl = "https://www.reddit.com/api/v1/access_token";
-
         public const string ApiUri = "https://oauth.reddit.com";
 
-        public const string UserAgentName = "subrpoststats";
+        public const string AppName = "subrpoststats";
+
+        public const string UserAgentName = AppName;
         public const string UserAgentVersion = "1.0";
+
+        public static ProductInfoHeaderValue MakeUserAgentHeader() => new (RedditApi.UserAgentName, UserAgentVersion);
     }
 }
