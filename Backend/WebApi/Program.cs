@@ -1,26 +1,38 @@
 using System.Text.Json.Serialization;
 
+using SubredditStats.Backend.Lib.RedditApi;
+using SubredditStats.Backend.Lib.Store;
+using SubredditStats.Backend.WebApi.Services;
+
 namespace SubredditStats.Backend.WebApi
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder(args);           
 
             // Add services to the container.
-
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
+                // add ability to directly use & parse enums in the endpoint definitions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            });
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            });            
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
+            builder.Services.AddHttpClient("RedditStatsApiClient", client =>
+            {
+                client.BaseAddress = new Uri(RedditApiAuth.ApiUri);
+            });
+            builder.Services.AddHttpClient<IRedditStatsApiClient, RedditStatsApiClient>("RedditStatsApiClient");
 
-            // Configure the HTTP request pipeline.
+            builder.Services.AddSingleton<ISubredditPostsStatsStore, MemoryBackingStore>();            
+            builder.Services.AddHostedService<SubredditPostsStatsCalculator>();
+
+            var app = builder.Build();   
+            
+            // confire HTTP request pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -28,12 +40,8 @@ namespace SubredditStats.Backend.WebApi
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

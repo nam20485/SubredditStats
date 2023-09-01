@@ -1,42 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Logging;
+
 using SubredditStats.Shared;
 using SubredditStats.Shared.Model;
 
-namespace SubredditStats.Backend.Lib
+namespace SubredditStats.Backend.Lib.RedditApi
 {
-    public class RedditStatsApiClient : ISubredditStatsSource
+    public class RedditStatsApiClient : IRedditStatsApiClient
     {
-        private const string RedditApiUri = "https://oauth.reddit.com";
-        private const string SubredditPostListingUriFormat = RedditApiUri + "/r/{0}/{1}";
-
-        private RedditApiToken? _currentAccessToken;
-
         public enum PostListingSortType
         {
             top,
             @new
         }
 
-        public RedditStatsApiClient()
+        public const string HttpClientName = "RedditStatsApiClient";
+
+        private const string SubredditPostListingUriFormat = RedditApiAuth.ApiUri + "/r/{0}/{1}";
+
+        private readonly IHttpClientFactory? _httpClientFactory;
+        //private readonly ILogger<RedditStatsApiClient> _logger;
+
+        private readonly HttpClient _httpClient;
+
+        private RedditApiToken? _currentAccessToken;
+
+        public double RateLimitUsed { get; private set; }
+        public double RateLimitRemaining { get; private set; }
+        // number of seconds remaining until new period starts
+        public int RateLimitReset { get; private set; }
+
+        public RedditStatsApiClient(HttpClient httpClient)
         {
+            //_logger = logger;
+            _httpClient = httpClient;
+            //_httpClientFactory = httpClientFactory;
             _currentAccessToken = null;
-        }  
+        }
 
         public async Task<RedditPostListing?> FetchSubredditPostListing(string subreddit, PostListingSortType sort)
         {
-            using var httpClient = await CreateHttpClientAsync();
+            var httpClient = await CreateHttpClientAsync();
             if (httpClient is not null)
             {
                 var uri = string.Format(SubredditPostListingUriFormat, subreddit, sort.ToString());
                 var response = await httpClient.GetAsync(uri);
+                GetRateLimitValues(response);
                 if (response.IsSuccessStatusCode)
                 {
                     var s = await response.Content.ReadAsStringAsync();
@@ -46,7 +64,17 @@ namespace SubredditStats.Backend.Lib
                 }
             }
             return null;
-        }     
+        }
+
+        private void GetRateLimitValues(HttpResponseMessage response)
+        {
+            var rateLimitUsedHeader = response.Headers.GetValues("X-Ratelimit-Used");
+            RateLimitUsed = double.Parse(rateLimitUsedHeader.First());
+            var rateLimitRemainingdHeader = response.Headers.GetValues("X-Ratelimit-Remaining");
+            RateLimitRemaining = double.Parse(rateLimitRemainingdHeader.First());
+            var rateLimitResetHeader = response.Headers.GetValues("X-Ratelimit-Reset");
+            RateLimitReset = int.Parse(rateLimitResetHeader.First());
+        }
 
         public async Task<RedditPostListing?> GetSubredditTopPosts(string subreddit)
         {
@@ -76,7 +104,7 @@ namespace SubredditStats.Backend.Lib
                 }
             }
             return null;
-        }        
+        }
 
         private async Task<HttpClient?> CreateHttpClientAsync()
         {
@@ -87,9 +115,10 @@ namespace SubredditStats.Backend.Lib
 
             if (_currentAccessToken is null) return null;
 
-            var client = new HttpClient();
+            var client = _httpClient;
+            //_httpClientFactory.CreateClient(HttpClientName);
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(RedditApiAuth.UserAgent, "0.9"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _currentAccessToken.AccessToken);               
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _currentAccessToken.AccessToken);
             return client;
         }
     }

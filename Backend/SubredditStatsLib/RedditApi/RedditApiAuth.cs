@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SubredditStats.Backend.Lib
+namespace SubredditStats.Backend.Lib.RedditApi
 {
     public class RedditApiAuth
     {
@@ -16,6 +16,8 @@ namespace SubredditStats.Backend.Lib
         public static string AppName => "subrpoststats";
 
         private const string TokenUrl = "https://www.reddit.com/api/v1/access_token";
+
+        public const string ApiUri = "https://oauth.reddit.com";
 
         public const string UserAgent = "subrpoststats";
 
