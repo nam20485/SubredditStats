@@ -32,6 +32,12 @@ namespace SubredditStats.Backend.WebApi.Controllers
             return _store.MostPosters;
         }
 
+        [HttpGet("all_posts")]
+        public PostInfo[] GetAllPosts()
+        {
+            return _store.AllPostInfos;
+        }
+
         //[HttpGet("top_posts/{subreddit}")]
         //public async Task<ActionResult<RedditPostListing?>> GetSubredditTopPosts([FromRoute] string subreddit)
         //{
