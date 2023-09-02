@@ -10,22 +10,24 @@ namespace SubredditStats.Backend.Lib.Store
 {
     public class MemoryStore : ISubredditPostStatsStore
     {
-        private readonly PostInfo.StringDictionary _postInfosByApiName;
+        public DateTime? Started { get; set; }
+
+        private readonly PostInfo.StringDictionary _allPostInfosByApiName;
         private readonly MostPosterInfo.StringDictionary _mostPosterInfosByUsername;        
         private readonly PostInfo.StringDictionary _topPostInfosByApiName;
 
         // basic concurrency synchronization
         private readonly object _mostPostersLock;
         private readonly object _topPostsLock;
-        private readonly object _postInfosLock;
+        private readonly object _allPostInfosLock;
 
         public MemoryStore()
         {
             _mostPostersLock = new();
             _topPostsLock = new();
-            _postInfosLock = new();
+            _allPostInfosLock = new();
 
-            _postInfosByApiName = new();
+            _allPostInfosByApiName = new();
             _mostPosterInfosByUsername = new();
             _topPostInfosByApiName = new();
         }
@@ -52,13 +54,13 @@ namespace SubredditStats.Backend.Lib.Store
             }
         }
 
-        public PostInfo[] PostInfos
+        public PostInfo[] AllPostInfos
         {
             get
             {
-                lock (_postInfosLock)
+                lock (_allPostInfosLock)
                 {
-                    return _postInfosByApiName.Values.ToArray();
+                    return _allPostInfosByApiName.Values.ToArray();
                 }
             }
         }
@@ -80,18 +82,18 @@ namespace SubredditStats.Backend.Lib.Store
             {
                 foreach (var topPostInfo in topPostInfos)
                 {
-                    _postInfosByApiName[topPostInfo.ApiName] = topPostInfo;
+                    _allPostInfosByApiName[topPostInfo.ApiName] = topPostInfo;
                 }
             }
         }
 
         public void AddPostInfos(IEnumerable<PostInfo> postInfos)
         {
-            lock (_topPostsLock)
+            lock (_allPostInfosLock)
             {
                 foreach (var postInfo in postInfos)
                 {
-                    _postInfosByApiName[postInfo.ApiName] = postInfo;
+                    _allPostInfosByApiName[postInfo.ApiName] = postInfo;
                 }
             }
         }

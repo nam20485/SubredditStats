@@ -12,11 +12,13 @@ namespace SubredditStats.Backend.Lib.Store
     {
         // e.g. use Entity Framework to store and fetch the data from a database
 
+        public DateTime? Started { get; set; }
+
         public MostPosterInfo[] MostPosters => throw new NotImplementedException();
 
         public PostInfo[] TopPosts => throw new NotImplementedException();
 
-        public PostInfo[] PostInfos => throw new NotImplementedException();
+        public PostInfo[] AllPostInfos => throw new NotImplementedException();
 
         public void AddMostPosters(IEnumerable<MostPosterInfo> mostPosters)
         {

@@ -9,9 +9,11 @@ using SubredditStats.Shared.Model;
 namespace SubredditStats.Shared
 {
     public interface ISubredditPostStatsSource
-    {
+    {        
         MostPosterInfo[] MostPosters { get; }
         PostInfo[] TopPosts { get; }
-        PostInfo[] PostInfos { get; }
+        PostInfo[] AllPostInfos { get; }
+
+        DateTime? Started { get; set; }
     }
 }

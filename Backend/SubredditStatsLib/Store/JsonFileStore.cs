@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 using SubredditStats.Shared.Model;
 
@@ -12,11 +13,13 @@ namespace SubredditStats.Backend.Lib.Store
     {
         // e.g. save data and load data from JSON file
 
+        public DateTime? Started { get; set; }
+
         public MostPosterInfo[] MostPosters => throw new NotImplementedException();
 
         public PostInfo[] TopPosts => throw new NotImplementedException();
 
-        public PostInfo[] PostInfos => throw new NotImplementedException();
+        public PostInfo[] AllPostInfos => throw new NotImplementedException();
 
         public void AddMostPosters(IEnumerable<MostPosterInfo> mostPosters)
         {
