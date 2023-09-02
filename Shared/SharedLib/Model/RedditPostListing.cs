@@ -73,7 +73,7 @@ namespace SubredditStats.Shared.Model
         public string thumbnail { get; set; }
 
         // read 'edited' as an object since possible values seen include floats and booleans
-        // i.e. 1617227700.0 and false (seems to be false if not edited, otherwise the epoch time of its last edit)
+        // i.e. 1617227700.0 and false (seems to be false if not edited, otherwise the epoch time (?) of its last edit)
         // JSON deserializer chokes on it...
         public object edited { get; set; }
         public object author_flair_css_class { get; set; }

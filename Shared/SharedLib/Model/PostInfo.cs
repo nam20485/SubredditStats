@@ -11,10 +11,12 @@ namespace SubredditStats.Shared.Model
         public string PostTitle { get; }
         public int UpVotes { get; }
         public int DownVotes { get; }
+        public int Score { get; }
         public string PostUrl { get; }
         public string Subreddit { get; }
         public string Author { get; }
         public string ApiName { get; }
+        public DateTime Created { get; }
         public DateTime Fetched { get; }
 
         /// <summary>
@@ -27,15 +29,17 @@ namespace SubredditStats.Shared.Model
         /// </summary>
         public int VoteDifference => UpVotes - DownVotes;
 
-        public PostInfo(string postTitle, int upVotes, int downVotes, string postUrl, string subreddit, string author, string apiName, DateTime fetched)
+        public PostInfo(string postTitle, int upVotes, int downVotes, int score, string postUrl, string subreddit, string author, string apiName, DateTime created, DateTime fetched)
         {
             PostTitle = postTitle;
             UpVotes = upVotes;
             DownVotes = downVotes;
+            Score = score;
             PostUrl = postUrl;
             Subreddit = subreddit;
             Author = author;
             ApiName = apiName;
+            Created = created;
             Fetched = fetched;
         }       
 

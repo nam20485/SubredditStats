@@ -41,7 +41,12 @@ namespace SubredditStats.Backend.WebApi.Services
             _logger = logger;
         }
 
-        public async Task FetchSubredditPosts(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            await FetchSubredditPosts(stoppingToken);
+        }
+
+        private async Task FetchSubredditPosts(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -65,14 +70,19 @@ namespace SubredditStats.Backend.WebApi.Services
                         {
                             foreach (var post in postListingSlice.data.children)
                             {
+                                var epoch = Convert.ToInt32(post.data.created_utc);
+                                var createdDT = DateTimeOffset.FromUnixTimeSeconds(epoch).DateTime.ToUniversalTime();
+
                                 postInfos.Add(new PostInfo(
                                     post.data.title,
                                     post.data.ups,
                                     post.data.downs,
+                                    post.data.score,
                                     post.data.url,
                                     post.data.subreddit,
                                     post.data.author,
                                     post.data.name,
+                                    createdDT,
                                     DateTime.UtcNow));
                             }
 
@@ -89,17 +99,6 @@ namespace SubredditStats.Backend.WebApi.Services
                     _logger.LogWarning(e, "{ExceptionMessage}", "Exception while fetching subreddit posts");
                 }
             }
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            // start thread processing all post infos and updating top posters and most posters
-
-            //Task.Run(CalculateSubredditStats)
-
-            // use ThreadProcessRequetThreadLoop class to process/calculate stats
-
-            await FetchSubredditPosts(stoppingToken);
-        }       
+        }        
     }
 }
