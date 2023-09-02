@@ -33,7 +33,10 @@ namespace SubredditStats.Backend.Lib.RedditApi
         public double LastRateLimitUsed { get; private set; }
         public double LastRateLimitRemaining { get; private set; }
         // number of seconds remaining until new period starts
-        public int LastRateLimitReset { get; private set; }
+        public int LastRateLimitPeriodReset { get; private set; }
+        public int RateLimitPeriodPassed => 600 - LastRateLimitPeriodReset;
+        public double SecondsPerRequestRate => RateLimitPeriodPassed / LastRateLimitUsed;
+        public double RequestsPerSecondRate => LastRateLimitUsed / RateLimitPeriodPassed;
 
         public RedditStatsApiClient(HttpClient httpClient, ILogger<RedditStatsApiClient> logger, IRedditApiTokenService apiTokenService)
         {           
@@ -71,10 +74,13 @@ namespace SubredditStats.Backend.Lib.RedditApi
 
         private void LogRateLimitValues()
         {
-            _logger.LogInformation("Last Request's Rate Limit Header Values\nUsed: {LastRateLimitUsed}\nRemaining: {LastRateLimitRemaining}\nWindow Reset: {LastRateLimitReset}",
+            _logger.LogInformation("Last Request's Rate Limit Header Values\n\tTotal Used: {LastRateLimitUsed}\n\tTotal Remaining: {LastRateLimitRemaining}\n\tPeriod Remaining (s): {LastRateLimitPeriodReset}\n\tPeriod Passed (s): {RateLimitPeriodPassed}\n\tRate (s/request): {SecondsPerRequestRate:0.0}\n\tRate (requests/s): {RequestsPerSecondRate:0.0}",
                                    LastRateLimitUsed,
                                    LastRateLimitRemaining,
-                                   LastRateLimitReset);
+                                   LastRateLimitPeriodReset,
+                                   RateLimitPeriodPassed,
+                                   SecondsPerRequestRate,
+                                   RequestsPerSecondRate);
         }
 
         private static Uri BuildUri(string subreddit, PostListingSortType sort, int limit, string after, int count)
@@ -117,7 +123,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             var rateLimitRemainingdHeader = response.Headers.GetValues("X-Ratelimit-Remaining");
             LastRateLimitRemaining = double.Parse(rateLimitRemainingdHeader.First());
             var rateLimitResetHeader = response.Headers.GetValues("X-Ratelimit-Reset");
-            LastRateLimitReset = int.Parse(rateLimitResetHeader.First());
+            LastRateLimitPeriodReset = int.Parse(rateLimitResetHeader.First());
         }
         
         //// returning HTTP 403 Forbidden (probably requires mod persmission)
