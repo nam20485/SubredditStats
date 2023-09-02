@@ -4,12 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using SubredditStats.Shared;
 using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.Lib.Store
 {
     public class MemoryStore : ISubredditPostStatsStore
     {
+        public event ISubredditPostStatsSource.PostListUpdatedHandler? PostListUpdated;
+
+        public string? Subreddit { get; set; }
         public DateTime? Started { get; set; }
 
         private readonly PostInfo.StringDictionary _allPostInfosByApiName;
@@ -63,9 +67,9 @@ namespace SubredditStats.Backend.Lib.Store
                     return _allPostInfosByApiName.Values.ToArray();
                 }
             }
-        }
+        }        
 
-        public void AddMostPosters(IEnumerable<MostPosterInfo> mostPosters)
+        public void SetMostPosters(IEnumerable<MostPosterInfo> mostPosters)
         {
             lock (_mostPostersLock)
             {
@@ -76,13 +80,13 @@ namespace SubredditStats.Backend.Lib.Store
             }
         }
 
-        public void AddTopPosters(IEnumerable<PostInfo> topPostInfos)
+        public void SetTopPosters(IEnumerable<PostInfo> topPostInfos)
         {
             lock (_topPostsLock)
             {
                 foreach (var topPostInfo in topPostInfos)
                 {
-                    _allPostInfosByApiName[topPostInfo.ApiName] = topPostInfo;
+                    _topPostInfosByApiName[topPostInfo.ApiName] = topPostInfo;
                 }
             }
         }
@@ -94,7 +98,12 @@ namespace SubredditStats.Backend.Lib.Store
                 foreach (var postInfo in postInfos)
                 {
                     _allPostInfosByApiName[postInfo.ApiName] = postInfo;
-                }
+                }               
+            }
+
+            if (postInfos.Any())
+            {
+                PostListUpdated?.Invoke(this);
             }
         }
     }

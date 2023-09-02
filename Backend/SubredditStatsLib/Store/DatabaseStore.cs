@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using SubredditStats.Shared;
 using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.Lib.Store
@@ -12,7 +13,11 @@ namespace SubredditStats.Backend.Lib.Store
     {
         // e.g. use Entity Framework to store and fetch the data from a database
 
-        public DateTime? Started { get; set; }
+        public event ISubredditPostStatsSource.PostListUpdatedHandler? PostListUpdated;
+
+        public DateTime? Started { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public string Subreddit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public MostPosterInfo[] MostPosters => throw new NotImplementedException();
 
@@ -20,19 +25,10 @@ namespace SubredditStats.Backend.Lib.Store
 
         public PostInfo[] AllPostInfos => throw new NotImplementedException();
 
-        public void AddMostPosters(IEnumerable<MostPosterInfo> mostPosters)
-        {
-            throw new NotImplementedException();
-        }     
+        public void SetMostPosters(IEnumerable<MostPosterInfo> mostPosters) => throw new NotImplementedException();
 
-        public void AddPostInfos(IEnumerable<PostInfo> postInfos)
-        {
-            throw new NotImplementedException();
-        }
+        public void AddPostInfos(IEnumerable<PostInfo> postInfos) => throw new NotImplementedException();
 
-        public void AddTopPosters(IEnumerable<PostInfo> topPostInfos)
-        {
-            throw new NotImplementedException();
-        }
+        public void SetTopPosters(IEnumerable<PostInfo> topPostInfos) => throw new NotImplementedException();
     }
 }
