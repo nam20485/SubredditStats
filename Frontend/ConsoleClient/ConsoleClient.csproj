@@ -8,4 +8,8 @@
 	<RootNamespace>SubredditStats.Frontend.ConsoleClient</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\SharedLib\SharedLib.csproj" />
+  </ItemGroup>
+
 </Project>
