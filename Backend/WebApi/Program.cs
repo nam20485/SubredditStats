@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 
 using SubredditStats.Backend.Lib.RedditApi;
 using SubredditStats.Backend.Lib.Store;
+using SubredditStats.Backend.Lib.Utils;
 using SubredditStats.Backend.WebApi.Services;
 
 namespace SubredditStats.Backend.WebApi
@@ -22,10 +24,26 @@ namespace SubredditStats.Backend.WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // add our custom services to the DI container (separate functionality is implemented
-            // in its own service to reduce coupling and increase cohesion & encapsulation)
+            // add our custom services to the DI container (each separate functionality is 
+            // implemented in its own service to reduce coupling and increase cohesion & encapsulation)
             builder.Services.AddHttpClient<IRedditApiTokenService, RedditApiTokenService>();
-            builder.Services.AddHttpClient<IRedditStatsClient, RedditStatsApiClient>();
+            builder.Services.AddHttpClient<IRedditStatsClient, RedditStatsApiClient>()
+                .ConfigurePrimaryHttpMessageHandler(() =>
+                {
+                    // use "static" client-side rate limiting (better solution would use rate limiting resposne headers)
+                    return new ClientSideRateLimitedHandler(
+                        new TokenBucketRateLimiter(
+                            new TokenBucketRateLimiterOptions
+                            {
+                                // 60 requests per minute?
+                                TokenLimit = 60,
+                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                                QueueLimit = 0,
+                                ReplenishmentPeriod = TimeSpan.FromMinutes(1),
+                                TokensPerPeriod = 60,
+                                AutoReplenishment = true
+                            }));
+                });
             builder.Services.AddSingleton<ISubredditPostsStatsStore, MemoryStore>();            
             builder.Services.AddHostedService<SubredditPostsStatsCalculator>();
 
