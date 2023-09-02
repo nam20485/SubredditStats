@@ -23,7 +23,7 @@ namespace SubredditStats.Backend.Lib.Utils
 
         private void RemovePastRequests()
         {
-            // earliest existing request is expired, remove it
+            // while earliest existing request is expired, remove it
             while ((_requestTimes.Count > 0) && (_requestTimes.Peek().Add(_windowDuration) < DateTime.UtcNow))
             {
                 _requestTimes.Dequeue();
@@ -42,7 +42,7 @@ namespace SubredditStats.Backend.Lib.Utils
             {
                 // wait until we can request again (i.e. when earliest existing request will expire)                
                 var earliestRequestWillExpireIn = _requestTimes.Peek().Add(_windowDuration).Subtract(DateTime.UtcNow);
-                // TODO: what happens when Queue is empty?
+                // TODO: what happens when Queue is empty? (Queue.Size > 0 or CanRequestNow wouldn't have returned false)
                 // TODO: what happens when earliestRequestWillExpireIn is negative?
                 Thread.Sleep(earliestRequestWillExpireIn);                
             }
