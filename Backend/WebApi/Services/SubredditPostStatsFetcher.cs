@@ -38,6 +38,7 @@ namespace SubredditStats.Backend.WebApi.Services
             }
 
             _backingStore.Started = DateTime.UtcNow;
+            _backingStore.Subreddit = Subreddit;
             _logger = logger;
         }
 
@@ -59,19 +60,20 @@ namespace SubredditStats.Backend.WebApi.Services
 
                     var after = "";
                     var count = 0;
+                    var sortType = RedditStatsApiClient.PostListingSortType.top;
                     do
-                    {
-                        var postListingSlice = await _apiClient.FetchSubredditPostListingSlice(Subreddit,
-                                                                                          RedditStatsApiClient.PostListingSortType.unspecified,
-                                                                                          PostListingSliceLimit,
-                                                                                          after,
-                                                                                          count);
-                        if (postListingSlice is not null)
+                    {                        
+                        var slice = await _apiClient.FetchSubredditPostListingSlice(Subreddit,
+                                                                                    sortType,
+                                                                                    PostListingSliceLimit,
+                                                                                    after,
+                                                                                    count);
+                        if (slice is not null)
                         {
-                            foreach (var post in postListingSlice.data.children)
+                            foreach (var post in slice.data.children)
                             {
-                                var epoch = Convert.ToInt32(post.data.created_utc);
-                                var createdDT = DateTimeOffset.FromUnixTimeSeconds(epoch).DateTime.ToUniversalTime();
+                                var createdOffset = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(post.data.created_utc));
+                                var created = createdOffset.DateTime.ToUniversalTime();
 
                                 postInfos.Add(new PostInfo(
                                     post.data.title,
@@ -82,12 +84,12 @@ namespace SubredditStats.Backend.WebApi.Services
                                     post.data.subreddit,
                                     post.data.author,
                                     post.data.name,
-                                    createdDT,
+                                    created,
                                     DateTime.UtcNow));
                             }
 
-                            after = postListingSlice.data.after;
-                            count += postListingSlice.data.dist;
+                            after = slice.data.after;
+                            count += slice.data.dist;
                         }
                     } while (!string.IsNullOrWhiteSpace(after) &&
                              !stoppingToken.IsCancellationRequested);
