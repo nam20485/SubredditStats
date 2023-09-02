@@ -16,7 +16,7 @@ namespace SubredditStats.Backend.Lib.Utils
 
         public SlidingWindowEventLimiter(int maxRequestsPerWindow, TimeSpan windowDuration)
         {
-            this._maxRequestsPerWindow = maxRequestsPerWindow;
+            _maxRequestsPerWindow = maxRequestsPerWindow;
             _windowDuration = windowDuration;
             _requestTimes = new Queue<DateTime>(maxRequestsPerWindow);
         }
