@@ -60,7 +60,7 @@ namespace SubredditStats.Backend.WebApi.Services
 
                     var after = "";
                     var count = 0;
-                    var sortType = RedditStatsApiClient.PostListingSortType.top;
+                    var sortType = RedditStatsApiClient.PostListingSortType.unspecified;
                     do
                     {                        
                         var slice = await _apiClient.FetchSubredditPostListingSlice(Subreddit,
