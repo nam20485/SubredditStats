@@ -23,6 +23,7 @@ namespace SubredditStats.Backend.WebApi
             // Add services to the container.
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.WriteIndented = true;
                 // add ability to directly use & parse enums in the endpoint parameters
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });       
