@@ -8,13 +8,15 @@ namespace SubredditStats.Shared.Model
 {
     public class MostPosterInfo
     {
-        public string? Username { get; set; }
-        public int PostCount { get; set; }
-        public string? Subreddit { get; set; }
+        public string Username { get; }
+        public int PostCount { get; }
+        public string Subreddit { get; }
         
-        public MostPosterInfo()
-        {            
-            PostCount = -1;
+        public MostPosterInfo(string username, int postCount, string subreddit)
+        {
+            Username = username;
+            PostCount = postCount;
+            Subreddit = subreddit;
         }
 
         public class StringDictionary : Dictionary<string, MostPosterInfo>
