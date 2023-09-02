@@ -12,8 +12,14 @@ namespace SubredditStats.Backend.WebApi
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);           
+            var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddResponseCompression(options =>
+            {
+                // not safe for cookie-based token authentication, use header bearer tokens only!
+                // https://learn.microsoft.com/en-us/aspnet/core/performance/response-compression?view=aspnetcore-7.0#compression-with-https
+                options.EnableForHttps = true;
+            });
             // Add services to the container.
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
@@ -46,6 +52,7 @@ namespace SubredditStats.Backend.WebApi
                 });
             builder.Services.AddSingleton<ISubredditPostStatsStore, MemoryStore>();            
             builder.Services.AddHostedService<SubredditPostStatsFetcher>();
+            builder.Services.AddHostedService<SubredditPostStatsCalculator>();
 
             var app = builder.Build();   
             
@@ -56,6 +63,7 @@ namespace SubredditStats.Backend.WebApi
                 app.UseSwaggerUI();
             }
 
+            app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
