@@ -36,11 +36,11 @@ namespace SubredditStats.Backend.WebApi
                             new TokenBucketRateLimiterOptions
                             {
                                 // 60 requests per minute?
-                                TokenLimit = 60,
+                                TokenLimit = 600,
                                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                                 QueueLimit = 0,
-                                ReplenishmentPeriod = TimeSpan.FromMinutes(1),
-                                TokensPerPeriod = 60,
+                                ReplenishmentPeriod = TimeSpan.FromSeconds(600),
+                                TokensPerPeriod = 600,
                                 AutoReplenishment = true
                             }));
                 });
