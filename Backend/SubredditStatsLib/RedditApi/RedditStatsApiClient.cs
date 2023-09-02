@@ -76,18 +76,17 @@ namespace SubredditStats.Backend.Lib.RedditApi
 
         private void LogRateLimiterKind(HttpResponseMessage response)
         {
-            response.Headers.TryGetValues(ClientSideRateLimitedHandler.CustomRasteLimiterHeaderName, out var values);
-            if (values != null && values.Any())
-            {
+            if (response.Headers.TryGetValues(ClientSideRateLimitedHandler.CustomRasteLimiterHeaderName, out var values))
+            { 
                 var rateLimiterName = values.First();
                 if (rateLimiterName == nameof(ClientSideRateLimitedHandler))
                 {
                     _logger.LogWarning("Rate limit reached for {RateLimiterName} (limited client-side)", rateLimiterName);
                 }
             }
-            else
+            else if (response.Headers.TryGetValues(RedditApi.RateLimitResetHeaderName, out values))
             {
-                //response.Headers.TryGetValues(, out values);
+                _logger.LogWarning("Rate limit reached (from the server)");
             }
         }       
 
