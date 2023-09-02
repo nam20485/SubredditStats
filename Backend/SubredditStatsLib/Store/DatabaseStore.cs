@@ -17,7 +17,7 @@ namespace SubredditStats.Backend.Lib.Store
 
         public DateTime? Started { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public string Subreddit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string? Subreddit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public MostPosterInfo[] MostPosters => throw new NotImplementedException();
 
