@@ -4,7 +4,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
 {
     public interface IRedditStatsClient
     {
-        Task<RedditPostListing?> FetchSubredditPostListing(string subreddit,
+        Task<RedditPostListing?> FetchSubredditPostListingSlice(string subreddit,
                                                            RedditStatsApiClient.PostListingSortType sort = RedditStatsApiClient.PostListingSortType.unspecified,
                                                            int limit = 25,
                                                            string? after = "",
