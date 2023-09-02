@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SubredditStats.Shared.Model
+namespace SubredditStats.Backend.Lib.RedditApi
 {  
     public class RedditPostListing
     {
