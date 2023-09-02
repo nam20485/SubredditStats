@@ -43,27 +43,40 @@ namespace SubredditStats.Backend.WebApi.Services
         public async Task CalculateStatsAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
-            {               
-                var topPostListings = await _apiClient.GetSubredditPostsSortedByTop(Subreddit);
-                if (topPostListings is not null)
+            {
+                var topPostInfos = new TopPostInfo.List();
+
+                const int sliceLength = 100;
+                var after = "";
+                var count = 0;
+                do
                 {
-                    var topPostInfos = new TopPostInfo.List();
-
-                    foreach (var post in topPostListings.data.children)
-                    {
-                        topPostInfos.Add(new TopPostInfo()
+                    var topPostListings = await _apiClient.FetchSubredditPostListing(Subreddit,
+                                                                                     RedditStatsApiClient.PostListingSortType.unspecified,
+                                                                                     sliceLength,
+                                                                                     after,
+                                                                                     count);
+                    if (topPostListings is not null)
+                    {                        
+                        foreach (var post in topPostListings.data.children)
                         {
-                            PostTitle = post.data.title,
-                            Subreddit = post.data.subreddit,
-                            Author = post.data.author,
-                            UpVotes = post.data.ups,
-                            PostUrl = post.data.url,
-                            ApiName = post.data.name
-                        });
-                    }
+                            topPostInfos.Add(new TopPostInfo()
+                            {
+                                PostTitle = post.data.title,
+                                Subreddit = post.data.subreddit,
+                                Author = post.data.author,
+                                UpVotes = post.data.ups,
+                                PostUrl = post.data.url,
+                                ApiName = post.data.name
+                            });
+                        }
 
-                    _backingStore.AddTopPosts(topPostInfos);
-                }                
+                        after = topPostListings.data.after;
+                        count = topPostInfos.Count;              
+                    }
+                } while (!string.IsNullOrWhiteSpace(after));
+
+                _backingStore.AddTopPosts(topPostInfos);
             }
         }
 

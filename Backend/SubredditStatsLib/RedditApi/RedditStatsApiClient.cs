@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,6 +8,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Web;
 
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +21,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
     {
         public enum PostListingSortType
         {
+            unspecified,
             top,
             @new
         }
@@ -44,12 +47,16 @@ namespace SubredditStats.Backend.Lib.RedditApi
             _httpClient.DefaultRequestHeaders.UserAgent.Add(RedditApi.MakeUserAgentHeader());
         }
 
-        public async Task<RedditPostListing?> FetchSubredditPostListing(string subreddit, PostListingSortType sort)
+        public async Task<RedditPostListing?> FetchSubredditPostListing(string subreddit,
+                                                                        PostListingSortType sort = PostListingSortType.unspecified,
+                                                                        int limit = 25,
+                                                                        string? after = "",
+                                                                        int count = 0)
         {
             var accessToken = await _apiTokenService.GetRedditApiAccessToken();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.AccessToken);
 
-            var uri = string.Format(SubredditPostListingUriFormat, subreddit, Enum.GetName<PostListingSortType>(sort));
+            var uri = BuildUri(subreddit, sort, limit, after, count);
             var response = await _httpClient.GetAsync(uri);
             GetRateLimitValues(response);
             if (response.IsSuccessStatusCode)
@@ -58,18 +65,39 @@ namespace SubredditStats.Backend.Lib.RedditApi
                 var redditPostListing = JsonSerializer.Deserialize<RedditPostListing>(s);
                 return redditPostListing;
             }
-            
+
             return null;
         }
-        
-        public async Task<RedditPostListing?> GetSubredditPostsSortedByTop(string subreddit)
-        {
-            return await FetchSubredditPostListing(subreddit, PostListingSortType.top);
+
+        private static Uri BuildUri(string subreddit, PostListingSortType sort, int limit, string after, int count)
+        {                      
+            var query = HttpUtility.ParseQueryString("");
+            query["after"] = after;
+            query["count"] = count.ToString();
+            query["limit"] = limit.ToString();
+
+            var strSort = "";
+            if (sort != PostListingSortType.unspecified)
+            {
+                strSort = Enum.GetName<PostListingSortType>(sort);
+            }
+
+            var uri = string.Format(SubredditPostListingUriFormat, subreddit, strSort);
+            var uriBuilder = new UriBuilder(uri)
+            {
+                Query = query.ToString()
+            };
+            return uriBuilder.Uri;
         }
 
-        public async Task<RedditPostListing?> GetSubredditPostsSortedByNew(string subreddit)
+        public async Task<RedditPostListing?> GetSubredditPostsSortedByTop(string subreddit, int limit = 25, string? after = "", int count = 0)
         {
-            return await FetchSubredditPostListing(subreddit, PostListingSortType.@new);
+            return await FetchSubredditPostListing(subreddit, PostListingSortType.top, limit, after, count);
+        }
+
+        public async Task<RedditPostListing?> GetSubredditPostsSortedByNew(string subreddit, int limit = 25, string? after = "", int count = 0)
+        {
+            return await FetchSubredditPostListing(subreddit, PostListingSortType.@new, limit, after, count);
         }
 
         private void GetRateLimitValues(HttpResponseMessage response)
