@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SubredditStats.Shared.Model
 {
-    public class TopPostInfo
+    public class PostInfo
     {
         public string? PostTitle { get; set; }
         public int UpVotes { get; set; }
@@ -15,21 +15,21 @@ namespace SubredditStats.Shared.Model
         public string? Author { get; set; }
         public string? ApiName { get; set; }
 
-        public TopPostInfo()
+        public PostInfo()
         {
             UpVotes = -1;
         }
 
-        public class StringDictionary : Dictionary<string, TopPostInfo>
+        public class StringDictionary : Dictionary<string, PostInfo>
         {
             public StringDictionary() : base() { }
             public StringDictionary(StringDictionary collection) : base(collection) { }
         }
 
-        public class List : List<TopPostInfo>
+        public class List : List<PostInfo>
         {
             public List() : base() { }
-            public List(IEnumerable<TopPostInfo> collection) : base(collection) { }            
+            public List(IEnumerable<PostInfo> collection) : base(collection) { }            
         }        
     }
 }

@@ -11,6 +11,7 @@ namespace SubredditStats.Shared
     public interface ISubredditPostStatsSource
     {
         MostPosterInfo[] MostPosters { get; }
-        TopPostInfo[] TopPosts { get; }
+        PostInfo[] TopPosts { get; }
+        PostInfo[] PostInfos { get; }
     }
 }

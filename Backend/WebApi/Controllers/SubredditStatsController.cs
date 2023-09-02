@@ -13,15 +13,15 @@ namespace SubredditStats.Backend.WebApi.Controllers
     [ApiController]
     public class SubredditStatsController : ControllerBase
     {        
-        private readonly ISubredditPostsStatsStore _store;
+        private readonly ISubredditPostStatsStore _store;
 
-        public SubredditStatsController(ISubredditPostsStatsStore store)
+        public SubredditStatsController(ISubredditPostStatsStore store)
         {
             _store = store;
         }
 
         [HttpGet("top_posts")]
-        public TopPostInfo[] GetTopPosts()
+        public PostInfo[] GetTopPosts()
         {
             return _store.TopPosts;
         }

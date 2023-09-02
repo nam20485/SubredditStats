@@ -10,10 +10,10 @@ using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.WebApi.Services
 {
-    public class SubredditPostsStatsCalculator : BackgroundService
+    public class SubredditPostStatsCalculator : BackgroundService
     {
         private readonly IRedditStatsClient _apiClient;
-        private readonly ISubredditPostsStatsStore _backingStore;
+        private readonly ISubredditPostStatsStore _backingStore;
         private readonly IConfiguration? _config;
 
         private readonly DateTime _started;        
@@ -21,9 +21,9 @@ namespace SubredditStats.Backend.WebApi.Services
         public string Subreddit { get; }
 
         public MostPosterInfo[] MostPosters => _backingStore.MostPosters;
-        public TopPostInfo[] TopPosts => _backingStore.TopPosts;
+        public PostInfo[] TopPosts => _backingStore.TopPosts;
 
-        public SubredditPostsStatsCalculator(ISubredditPostsStatsStore store,
+        public SubredditPostStatsCalculator(ISubredditPostStatsStore store,
                                              IRedditStatsClient apiClient,
                                              IConfiguration config)
         {
@@ -44,23 +44,23 @@ namespace SubredditStats.Backend.WebApi.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var topPostInfos = new TopPostInfo.List();
+                var postInfos = new PostInfo.List();
 
-                const int sliceLength = 100;
+                const int sliceLimit = 100;
                 var after = "";
                 var count = 0;
                 do
                 {
-                    var topPostListings = await _apiClient.FetchSubredditPostListing(Subreddit,
-                                                                                     RedditStatsApiClient.PostListingSortType.unspecified,
-                                                                                     sliceLength,
-                                                                                     after,
-                                                                                     count);
-                    if (topPostListings is not null)
+                    var postListings = await _apiClient.FetchSubredditPostListing(Subreddit,
+                                                                                  RedditStatsApiClient.PostListingSortType.unspecified,
+                                                                                  sliceLimit,
+                                                                                  after,
+                                                                                  count);
+                    if (postListings is not null)
                     {                        
-                        foreach (var post in topPostListings.data.children)
+                        foreach (var post in postListings.data.children)
                         {
-                            topPostInfos.Add(new TopPostInfo()
+                            postInfos.Add(new PostInfo()
                             {
                                 PostTitle = post.data.title,
                                 Subreddit = post.data.subreddit,
@@ -71,12 +71,12 @@ namespace SubredditStats.Backend.WebApi.Services
                             });
                         }
 
-                        after = topPostListings.data.after;
-                        count = topPostInfos.Count;              
+                        after = postListings.data.after;
+                        count = postInfos.Count;              
                     }
                 } while (!string.IsNullOrWhiteSpace(after));
 
-                _backingStore.AddTopPosts(topPostInfos);
+                _backingStore.AddPostInfos(postInfos);
             }
         }
 

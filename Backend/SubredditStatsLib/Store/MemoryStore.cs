@@ -8,20 +8,24 @@ using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.Lib.Store
 {
-    public class MemoryStore : ISubredditPostsStatsStore
+    public class MemoryStore : ISubredditPostStatsStore
     {
-        private readonly MostPosterInfo.StringDictionary _mostPosterInfosByUsername;
-        private readonly TopPostInfo.StringDictionary _topPostInfosByApiName;
+        private readonly PostInfo.StringDictionary _postInfosByApiName;
+        private readonly MostPosterInfo.StringDictionary _mostPosterInfosByUsername;        
+        private readonly PostInfo.StringDictionary _topPostInfosByApiName;
 
         // basic concurrency synchronization
         private readonly object _mostPostersLock;
         private readonly object _topPostsLock;
+        private readonly object _postInfosLock;
 
         public MemoryStore()
         {
             _mostPostersLock = new();
             _topPostsLock = new();
+            _postInfosLock = new();
 
+            _postInfosByApiName = new();
             _mostPosterInfosByUsername = new();
             _topPostInfosByApiName = new();
         }
@@ -37,13 +41,24 @@ namespace SubredditStats.Backend.Lib.Store
             }
         }
 
-        public TopPostInfo[] TopPosts
+        public PostInfo[] TopPosts
         {
             get
             {
                 lock (_topPostsLock)
                 {
                     return _topPostInfosByApiName.Values.ToArray();
+                }
+            }
+        }
+
+        public PostInfo[] PostInfos
+        {
+            get
+            {
+                lock (_postInfosLock)
+                {
+                    return _postInfosByApiName.Values.ToArray();
                 }
             }
         }
@@ -59,13 +74,24 @@ namespace SubredditStats.Backend.Lib.Store
             }
         }
 
-        public void AddTopPosts(IEnumerable<TopPostInfo> topPosts)
+        public void AddTopPosters(IEnumerable<PostInfo> topPostInfos)
         {
             lock (_topPostsLock)
             {
-                foreach (var topPost in topPosts)
+                foreach (var topPostInfo in topPostInfos)
                 {
-                    _topPostInfosByApiName[topPost.ApiName] = topPost;
+                    _postInfosByApiName[topPostInfo.ApiName] = topPostInfo;
+                }
+            }
+        }
+
+        public void AddPostInfos(IEnumerable<PostInfo> postInfos)
+        {
+            lock (_topPostsLock)
+            {
+                foreach (var postInfo in postInfos)
+                {
+                    _postInfosByApiName[postInfo.ApiName] = postInfo;
                 }
             }
         }

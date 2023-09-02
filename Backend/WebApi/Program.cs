@@ -44,8 +44,8 @@ namespace SubredditStats.Backend.WebApi
                                 AutoReplenishment = true
                             }));
                 });
-            builder.Services.AddSingleton<ISubredditPostsStatsStore, MemoryStore>();            
-            builder.Services.AddHostedService<SubredditPostsStatsCalculator>();
+            builder.Services.AddSingleton<ISubredditPostStatsStore, MemoryStore>();            
+            builder.Services.AddHostedService<SubredditPostStatsCalculator>();
 
             var app = builder.Build();   
             
