@@ -14,7 +14,7 @@ namespace SubredditStats.Shared.Model
 
     public class RedditPostListingData
     {
-        public object after { get; set; }
+        public string after { get; set; }
         public int dist { get; set; }
         public string modhash { get; set; }
         public string geo_filter { get; set; }
@@ -25,10 +25,10 @@ namespace SubredditStats.Shared.Model
     public class Child
     {
         public string kind { get; set; }
-        public LongData data { get; set; }
+        public PostData data { get; set; }
     }
 
-    public class LongData
+    public class PostData
     {
         public object approved_at_utc { get; set; }
         public string subreddit { get; set; }
