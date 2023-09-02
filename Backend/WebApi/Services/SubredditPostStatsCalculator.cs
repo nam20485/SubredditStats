@@ -46,7 +46,7 @@ namespace SubredditStats.Backend.WebApi.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error calculating subreddit post stats");
+                    _logger.LogWarning(ex, "Error calculating subreddit post stats");
                 }
             }
 

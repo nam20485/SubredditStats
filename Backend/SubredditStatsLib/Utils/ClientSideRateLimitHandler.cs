@@ -9,6 +9,8 @@ namespace SubredditStats.Backend.Lib.Utils
 
     public class ClientSideRateLimitedHandler : DelegatingHandler, IAsyncDisposable
     {
+        public const string CustomRasteLimiterHeaderName = "X-Rate-Limiter";
+
         private readonly RateLimiter _rateLimiter;
 
         public ClientSideRateLimitedHandler(RateLimiter limiter)
@@ -32,6 +34,7 @@ namespace SubredditStats.Backend.Lib.Utils
             {
                 response.Headers.Add("Retry-After",
                                      Convert.ToInt32(retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo));
+                response.Headers.Add(CustomRasteLimiterHeaderName, nameof(ClientSideRateLimitedHandler));
             }
 
             return response;
