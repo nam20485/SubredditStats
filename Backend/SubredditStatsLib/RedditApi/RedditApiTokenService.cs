@@ -54,7 +54,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             {
                 apiToken = await response.Content.ReadFromJsonAsync<RedditApiToken>();
 
-                _logger.LogInformation($"Fetched new access token: expires in {apiToken.Duration}");
+                _logger.LogInformation("Fetched new access token: expires in {ApiTokenDuration}", apiToken.Duration);
             }
 
             return apiToken;
