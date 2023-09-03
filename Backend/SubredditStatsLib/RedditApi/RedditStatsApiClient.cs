@@ -21,7 +21,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
     {
         public enum PostListingSortType
         {
-            unspecified,
+            none,
             top,
             @new
         }
@@ -45,7 +45,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
         }
 
         public async Task<RedditPostListing?> FetchSubredditPostListingSlice(string subreddit,
-                                                                             PostListingSortType sort = PostListingSortType.unspecified,
+                                                                             PostListingSortType sort = PostListingSortType.none,
                                                                              int limit = 25,
                                                                              string? after = "",
                                                                              int count = 0)
@@ -101,7 +101,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             }
 
             var uri = $"{RedditApi.ApiUri}/r/{subreddit}";            
-            if (sort != PostListingSortType.unspecified)
+            if (sort != PostListingSortType.none)
             {
                 uri += $"/{Enum.GetName<PostListingSortType>(sort)}";
             }
