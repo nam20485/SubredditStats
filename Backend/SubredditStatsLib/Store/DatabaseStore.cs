@@ -30,5 +30,11 @@ namespace SubredditStats.Backend.Lib.Store
         public void AddPostInfos(IEnumerable<PostInfo> postInfos) => throw new NotImplementedException();
 
         public void SetTopPosters(IEnumerable<PostInfo> topPostInfos) => throw new NotImplementedException();
+
+        public MostPosterInfo[] GetNumberOfMostPosters(int count) => throw new NotImplementedException();
+
+        public PostInfo[] GetNumberOfTopPosts(int count) => throw new NotImplementedException();
+
+        public PostInfo[] GetNumberOfAllPostInfos(int count) => throw new NotImplementedException();
     }
 }

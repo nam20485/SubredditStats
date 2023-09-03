@@ -106,5 +106,35 @@ namespace SubredditStats.Backend.Lib.Store
                 PostListUpdated?.Invoke(this);
             }
         }
+
+        public MostPosterInfo[] GetNumberOfMostPosters(int count)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            return MostPosters.Take(count).ToArray();
+        }
+
+        public PostInfo[] GetNumberOfTopPosts(int count)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            return TopPosts.Take(count).ToArray();
+        }
+
+        public PostInfo[] GetNumberOfAllPostInfos(int count)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            return AllPostInfos.Take(count).ToArray();
+        }
     }
 }

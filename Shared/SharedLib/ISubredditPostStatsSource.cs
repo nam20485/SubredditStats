@@ -13,5 +13,9 @@ namespace SubredditStats.Shared
         MostPosterInfo[] MostPosters { get; }
         PostInfo[] TopPosts { get; }
         PostInfo[] AllPostInfos { get; }              
+
+        MostPosterInfo[] GetNumberOfMostPosters(int count);
+        PostInfo[] GetNumberOfTopPosts(int count);
+        PostInfo[] GetNumberOfAllPostInfos(int count);
     }
 }
