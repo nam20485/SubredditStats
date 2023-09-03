@@ -40,9 +40,9 @@ namespace SubredditStats.Backend.WebApi.Services
             {
                 try
                 {
-                    _postListUpdatedSignal.WaitOne();
-
                     UpdateSubredditPostsStats();
+
+                    _postListUpdatedSignal.WaitOne();                    
                 }
                 catch (Exception ex)
                 {
@@ -73,6 +73,14 @@ namespace SubredditStats.Backend.WebApi.Services
             }
 
             _store.SetMostPosters(mostPosters.OrderByDescending(mp => mp.PostCount).ToArray());           
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            _postListUpdatedSignal.Set();
+            _postListUpdatedSignal.Dispose();
         }
     }
 }
