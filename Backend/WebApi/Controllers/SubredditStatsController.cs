@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Reflection.Metadata.Ecma335;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using SubredditStats.Backend.Lib;
@@ -20,23 +22,56 @@ namespace SubredditStats.Backend.WebApi.Controllers
             _store = store;
         }
 
+        [HttpGet("top_posts/{count:int}")]
+        public ActionResult<IEnumerable<PostInfo>> GetTopPosts([FromRoute] RequestData data)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(_store.TopPosts.Take(data.Count));
+        }
+
         [HttpGet("top_posts")]
-        public PostInfo[] GetTopPosts()
+        public ActionResult<IEnumerable<PostInfo>> GetTopPosts()
         {
             return _store.TopPosts;
         }
 
+        [HttpGet("most_posters/{count}")]
+        public ActionResult<IEnumerable<MostPosterInfo>> GetMostPosters([FromRoute] RequestData data)
+        {
+            if (! ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(_store.MostPosters.Take(data.Count));
+        }
+
         [HttpGet("most_posters")]
-        public MostPosterInfo[] GetMostPosters()
+        public IEnumerable<MostPosterInfo> GetMostPosters()
         {
             return _store.MostPosters;
         }
 
+        [HttpGet("all_posts/{count}")]
+        public ActionResult<IEnumerable<PostInfo>> GetAllPosts([FromRoute] RequestData data)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(_store.AllPostInfos.Take(data.Count));
+        }
+
         [HttpGet("all_posts")]
-        public PostInfo[] GetAllPosts()
+        public IEnumerable<PostInfo> GetAllPosts()
         {
             return _store.AllPostInfos;
-        }
+        }     
 
         //[HttpGet("top_posts/{subreddit}")]
         //public async Task<ActionResult<RedditPostListing?>> GetSubredditTopPosts([FromRoute] string subreddit)
