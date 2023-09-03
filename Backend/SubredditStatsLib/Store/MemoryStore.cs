@@ -11,7 +11,7 @@ namespace SubredditStats.Backend.Lib.Store
 {
     public class MemoryStore : ISubredditPostStatsStore
     {
-        public event ISubredditPostStatsSource.PostListUpdatedHandler? PostListUpdated;
+        public event ISubredditPostStatsStore.PostListUpdatedHandler? PostListUpdated;
 
         public string? Subreddit { get; set; }
         public DateTime? Started { get; set; }

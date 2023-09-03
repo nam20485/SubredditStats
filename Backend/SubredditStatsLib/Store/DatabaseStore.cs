@@ -13,7 +13,7 @@ namespace SubredditStats.Backend.Lib.Store
     {
         // e.g. use Entity Framework to store and fetch the data from a database
 
-        public event ISubredditPostStatsSource.PostListUpdatedHandler? PostListUpdated;
+        public event ISubredditPostStatsStore.PostListUpdatedHandler? PostListUpdated;
 
         public DateTime? Started { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
