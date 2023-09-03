@@ -42,5 +42,10 @@ namespace SubredditStats.Shared.Client
         {
             _httpClient.Dispose();
         }
+
+        public bool VerifyConnection()
+        {
+            return false;
+        }
     }
 }
