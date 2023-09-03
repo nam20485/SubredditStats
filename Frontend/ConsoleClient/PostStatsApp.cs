@@ -5,34 +5,34 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
+using SubredditStats.Frontend.ConsoleClient.Utils;
 using SubredditStats.Shared.Client;
-using SubredditStats.Shared.Utils;
 
 namespace SubredditStats.Frontend.ConsoleClient
 {
-    internal class PostStatsApp
+    internal partial class PostStatsApp
     {
         private const string DefaultApiUrl = "https://localhost:7199";        
-
-        public enum ExitCode
-        {
-            Success = 0,
-            InvalidArguments,
-            UnknownError
-        }
 
         private static readonly Logger Logger = new();
 
         private readonly ISubredditPostStatsClient _apiClient;
         private readonly PostStatsAppCliArguments _psaArgs;        
 
+        private readonly string _apiUrl = DefaultApiUrl;
+
         public PostStatsApp(string[] args)
         {
-            _psaArgs = new PostStatsAppCliArguments(args);           
+            _psaArgs = new PostStatsAppCliArguments(args);  
+
+            if (!string.IsNullOrWhiteSpace(_psaArgs.ApiUrl))
+            {
+                _apiUrl = _psaArgs.ApiUrl;
+            }
 
             _apiClient = new SubRedditPostStatsClient(new HttpClient()
             {
-                BaseAddress = new Uri(_psaArgs.ApiUrl ?? DefaultApiUrl)
+                BaseAddress = new Uri(_apiUrl)
             });
         }
 
@@ -40,8 +40,14 @@ namespace SubredditStats.Frontend.ConsoleClient
         {
             try
             {
-                Console.WriteLine("PostStatsApp Client v0.9");
+                Console.WriteLine($"PostStatsApp Client v0.9 - (api: {_apiUrl})");               
                 Console.WriteLine();
+
+                if (! _apiClient.VerifyConnection())
+                {
+                    Console.WriteLine("Cannot reach api! Verify API server is running and reachable at the above url.");
+                    return ExitCode.CantReachApi;
+                }
 
                 using (var consoleColors = new ConsoleColors(ConsoleColor.DarkGray))
                 {
@@ -62,12 +68,7 @@ namespace SubredditStats.Frontend.ConsoleClient
             }
           
             return ExitCode.UnknownError;
-        }
-
-        //private readonly ConsoleAnimation.GetFrameTextFunc _getPostsFrameFunc = (frameNumber) =>
-        //{
-        //    return GetPostsFrame(frameNumber);
-        //};    
+        }   
         
         private string GetPostsFrame(uint frameNumber)
         {
