@@ -74,7 +74,26 @@ namespace SubredditStats.Frontend.ConsoleClient
         {
             var sb = new StringBuilder();
 
-            sb.Append("top post 1\ntop post 2\ntop post 3\n");
+            try
+            {
+                sb.AppendLine($"{_psaArgs.NumberOfPosts} Top Posts:");
+                var topPosts = _apiClient.GetNumberOfTopPosts(_psaArgs.NumberOfPosts);
+                foreach (var topPost in topPosts)
+                {
+                    sb.AppendLine(topPost.ToString());
+                }
+
+                sb.AppendLine($"{_psaArgs.NumberOfPosts} Most Posters:");
+                var mostPosters = _apiClient.GetNumberOfMostPosters(_psaArgs.NumberOfPosts);
+                foreach (var mostPoster in mostPosters)
+                {
+                    sb.AppendLine(mostPoster.ToString());
+                }
+            }
+            catch(Exception e)
+            {
+                sb.AppendLine($"Exception:\n{e.ToString()}");
+            }
 
             return sb.ToString();
         }
