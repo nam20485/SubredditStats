@@ -2,7 +2,7 @@
 using System.Linq;
 
 
-namespace SubredditStats.Shared.Utils
+namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     public static class StringExtensions
     {

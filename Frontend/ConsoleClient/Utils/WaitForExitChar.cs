@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SubredditStats.Shared.Utils
+namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     public class WaitForExitChar
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SubredditStats.Shared.Utils
+namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     public class ConsoleColors : IDisposable
     {

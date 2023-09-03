@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace SubredditStats.Shared.Utils
+namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     public static class Caller
     {

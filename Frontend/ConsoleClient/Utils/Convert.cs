@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SubredditStats.Shared.Utils
+namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     public static class Convert
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace SubredditStats.Shared.Utils
+namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     public class ConsoleAnimation : IDisposable
     {
