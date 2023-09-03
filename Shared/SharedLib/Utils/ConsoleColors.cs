@@ -4,8 +4,8 @@ namespace SubredditStats.Shared.Utils
 {
     public class ConsoleColors : IDisposable
     {
-        private ConsoleColor _originalForegroundColor;
-        private ConsoleColor _originalBackgroundColor;
+        private ConsoleColor _previousForegroundColor;
+        private ConsoleColor _previousBackgroundColor;
 
         public ConsoleColors()
         {
@@ -26,7 +26,7 @@ namespace SubredditStats.Shared.Utils
         {
             set
             {
-                _originalForegroundColor = Console.ForegroundColor;
+                _previousForegroundColor = Console.ForegroundColor;
                 Console.ForegroundColor = value;
             }
         }
@@ -35,19 +35,19 @@ namespace SubredditStats.Shared.Utils
         {
             set
             {
-                _originalBackgroundColor = Console.BackgroundColor;
+                _previousBackgroundColor = Console.BackgroundColor;
                 Console.BackgroundColor = value;
             }
         }
 
         public void ResetForegroundColor()
         {
-            Console.ForegroundColor = _originalForegroundColor;
+            Console.ForegroundColor = _previousForegroundColor;
         }
 
         public void ResetBackgroundColor()
         {
-            Console.BackgroundColor = _originalBackgroundColor;
+            Console.BackgroundColor = _previousBackgroundColor;
         }
 
         public void ResetColors()

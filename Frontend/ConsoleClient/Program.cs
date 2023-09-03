@@ -1,10 +1,12 @@
-﻿namespace SubredditStats.Frontend.ConsoleClient
+﻿using SubredditStats.Shared.Client;
+
+namespace SubredditStats.Frontend.ConsoleClient
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            return (int) new PostStatsApp(args).Run();            
         }
     }
 }
