@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using SubredditStats.Shared.Utils;
+using SubredditStats.Frontend.ConsoleClient.Utils;
 
 namespace SubredditStats.Frontend.ConsoleClient
 {
