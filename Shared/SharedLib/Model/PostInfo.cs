@@ -19,16 +19,6 @@ namespace SubredditStats.Shared.Model
         public DateTime Created { get; }
         public DateTime Fetched { get; }
 
-        /// <summary>
-        /// Fuzzing is applied to the up and down vote totals, so the 
-        /// real "vote value" is the difference between the two totals.
-        /// <para>
-        /// Thus, &lt; 0 means a negative, or overall downvote, &gt; 0 means a 
-        /// positive or overall upvote, and 0 means its even (or note votes at all).
-        /// </para>
-        /// </summary>
-        public int VoteDifference => UpVotes - DownVotes;
-
         public PostInfo(string postTitle, int upVotes, int downVotes, int score, string postUrl, string subreddit, string author, string apiName, DateTime created, DateTime fetched)
         {
             PostTitle = postTitle;
@@ -41,7 +31,20 @@ namespace SubredditStats.Shared.Model
             ApiName = apiName;
             Created = created;
             Fetched = fetched;
-        }       
+        }
+
+        //🜂🜄▼▲↑↓
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"\"{PostTitle}\"");            
+            sb.AppendLine($"\t- {Author} (↑{UpVotes} ↓{DownVotes})");            
+            sb.Append($"\t- {PostUrl}");            
+
+            return sb.ToString();
+        }
 
         public class StringDictionary : Dictionary<string, PostInfo>
         {

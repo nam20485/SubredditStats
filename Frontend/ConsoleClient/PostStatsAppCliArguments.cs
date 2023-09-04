@@ -10,11 +10,15 @@ namespace SubredditStats.Frontend.ConsoleClient
 {
     internal class PostStatsAppCliArguments : CliArguments
     {
-        internal bool AllPosts => GetArgumentValueForCallableName<bool>();
-        internal bool TopPosts => GetArgumentValueForCallableName<bool>();
-        internal bool MostPosters => GetArgumentValueForCallableName<bool>();
-        internal int NumberOfPosts => GetArgumentValueForCallableName<int>();
-        internal string? ApiUrl => GetArgumentValueForPropertyName<string>();
+        private const string DefaultApiUrl = "https://localhost:7199";
+        private const int DefaultPostCount = 5;
+
+        //internal bool AllPosts => GetArgumentValueForCallableName<bool>();
+        //internal bool TopPosts => GetArgumentValueForCallableName<bool>();
+        //internal bool MostPosters => GetArgumentValueForCallableName<bool>();
+
+        internal int PostCount => GetArgumentValueForCallableName(defaultValue: DefaultPostCount);
+        internal string ApiUrl => GetArgumentValueForPropertyName(defaultValue: DefaultApiUrl);
 
         public PostStatsAppCliArguments(string[] args)
             : base(args)

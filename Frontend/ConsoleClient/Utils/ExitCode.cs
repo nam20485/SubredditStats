@@ -4,7 +4,7 @@
     {
         Success = 0,
         InvalidArguments,
-        CantReachApi,
+        ApiUnreachable,
         UnknownError
     }
 }

@@ -19,6 +19,15 @@ namespace SubredditStats.Shared.Model
             Subreddit = subreddit;
         }
 
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"{Username} ({PostCount} Posts)");            
+
+            return sb.ToString();
+        }
+
         public class StringDictionary : Dictionary<string, MostPosterInfo>
         {
             public StringDictionary() : base() { }

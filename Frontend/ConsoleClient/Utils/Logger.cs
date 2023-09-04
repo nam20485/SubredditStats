@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SubredditStats.Frontend.ConsoleClient
+namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     internal class Logger
     {
@@ -42,7 +42,7 @@ namespace SubredditStats.Frontend.ConsoleClient
 
         public void LogInfo(string message, params object[] formatParams)
         {
-            Console.Out.WriteLine(string.Format(message, formatParams));            
+            Console.Out.WriteLine(string.Format(message, formatParams));
         }
     }
 }

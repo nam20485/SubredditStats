@@ -12,27 +12,19 @@ namespace SubredditStats.Frontend.ConsoleClient
 {
     internal partial class PostStatsApp
     {
-        private const string DefaultApiUrl = "https://localhost:7199";        
+          
 
         private static readonly Logger Logger = new();
 
         private readonly ISubredditPostStatsClient _apiClient;
-        private readonly PostStatsAppCliArguments _psaArgs;        
-
-        private readonly string _apiUrl = DefaultApiUrl;
-
+        private readonly PostStatsAppCliArguments _psaArgs;
+        
         public PostStatsApp(string[] args)
         {
-            _psaArgs = new PostStatsAppCliArguments(args);  
-
-            if (!string.IsNullOrWhiteSpace(_psaArgs.ApiUrl))
-            {
-                _apiUrl = _psaArgs.ApiUrl;
-            }
-
+            _psaArgs = new PostStatsAppCliArguments(args);            
             _apiClient = new SubRedditPostStatsClient(new HttpClient()
             {
-                BaseAddress = new Uri(_apiUrl)
+                BaseAddress = new Uri(_psaArgs.ApiUrl)
             });
         }
 
@@ -40,27 +32,27 @@ namespace SubredditStats.Frontend.ConsoleClient
         {
             try
             {
-                Console.WriteLine($"PostStatsApp Client v0.9 - (api: {_apiUrl})");               
-                Console.WriteLine();
+                Console.WriteLine($"PostStatsApp Client v0.9 - [api: {_psaArgs.ApiUrl}]\n");
 
-                if (! _apiClient.VerifyConnection())
+                if (_apiClient.VerifyConnection())
                 {
-                    Console.WriteLine("Cannot reach api! Verify API server is running and reachable at the above url.");
-                    return ExitCode.CantReachApi;
+                    using (var consoleColors = new ConsoleColors(ConsoleColor.DarkGray))
+                    {
+                        Console.WriteLine("(Press CTRL+P to quit)\n");
+                    }
+
+                    using (var postsAnimation = new ConsoleAnimation(GetPostsFrame))
+                    {
+                        WaitForExitChar.Wait(ConsoleKey.P, ConsoleModifiers.Control);
+                    }
+
+                    return ExitCode.Success;
                 }
-
-                using (var consoleColors = new ConsoleColors(ConsoleColor.DarkGray))
+                else
                 {
-                    Console.WriteLine("(Press CTRL+P to quit)");
+                    Console.WriteLine("Cannot reach api: verify API server is running and accessible at the above url!");
+                    return ExitCode.ApiUnreachable;
                 }
-
-                Console.WriteLine();
-
-                using (var postsAnimation = new ConsoleAnimation(GetPostsFrame))
-                {
-                    postsAnimation.Start();
-                    WaitForExitChar.Wait(ConsoleKey.P, ConsoleModifiers.Control);
-                }                
             }
             catch (Exception e)
             {
@@ -74,28 +66,33 @@ namespace SubredditStats.Frontend.ConsoleClient
         {
             var sb = new StringBuilder();
 
-            try
+            var strTitle = $"{_psaArgs.PostCount} Top Posts:";
+            sb.AppendLine(strTitle);
+            //sb.AppendLine();
+            sb.AppendLine(new string('-', strTitle.Length));
+            var topPosts = _apiClient.GetNumberOfTopPosts(_psaArgs.PostCount);
+            foreach (var topPost in topPosts)
             {
-                sb.AppendLine($"{_psaArgs.NumberOfPosts} Top Posts:");
-                var topPosts = _apiClient.GetNumberOfTopPosts(_psaArgs.NumberOfPosts);
-                foreach (var topPost in topPosts)
-                {
-                    sb.AppendLine(topPost.ToString());
-                }
+                sb.AppendLine(topPost.ToString());
+            }
+            sb.AppendLine();
 
-                sb.AppendLine($"{_psaArgs.NumberOfPosts} Most Posters:");
-                var mostPosters = _apiClient.GetNumberOfMostPosters(_psaArgs.NumberOfPosts);
-                foreach (var mostPoster in mostPosters)
-                {
-                    sb.AppendLine(mostPoster.ToString());
-                }
-            }
-            catch(Exception e)
+            strTitle = $"{_psaArgs.PostCount} Most Posters:";
+            sb.AppendLine(strTitle);
+            //sb.AppendLine(new string('-', strTitle.Length));
+            //sb.AppendLine();
+            var mostPosters = _apiClient.GetNumberOfMostPosters(_psaArgs.PostCount);
+            foreach (var mostPoster in mostPosters)
             {
-                sb.AppendLine($"Exception:\n{e.ToString()}");
-            }
+                sb.AppendLine(mostPoster.ToString());
+            }            
 
             return sb.ToString();
+        }        
+
+        private static void SimulateException<TException>() where TException : Exception, new()
+        {
+            throw new TException();            
         }
     }
 }

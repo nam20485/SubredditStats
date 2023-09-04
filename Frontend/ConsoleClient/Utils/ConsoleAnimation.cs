@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 
+using SubredditStats.Shared.Model;
+
 namespace SubredditStats.Frontend.ConsoleClient.Utils
 {
     public class ConsoleAnimation : IDisposable
@@ -16,6 +18,7 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
         public bool HideCursor { get; set; }
         public bool Clear { get; set; }
         public string LastFrame { get; set; }
+        public bool DelayStart { get; set; }
 
         public ConsoleColor ForegroundColor
         {
@@ -36,6 +39,7 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
         private volatile bool _stop = false;
         private uint _frameNumber;
         private int _longestFrameText;
+        private int _mostNumberOfLines;
         private (int Left, int Top) _prevPosition;
 
         public ConsoleAnimation(int left, int top, GetFrameTextFunc getFrameTextFunc)
@@ -49,14 +53,21 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             _prevPosition = Console.GetCursorPosition();
             _frameNumber = 0;
             _longestFrameText = 0;
+            _mostNumberOfLines = 1;
             _consoleColors = new ConsoleColors();
             FrameDelayMs = DefaultDelayMs;
             HideCursor = true;
             Clear = false;
             LastFrame = "";
+            DelayStart = false;
 
             ForegroundColor = Console.ForegroundColor;
             BackgroundColor = Console.BackgroundColor;
+
+            if (!DelayStart)
+            {
+                Start();
+            }
         }
 
         public ConsoleAnimation(GetFrameTextFunc getFrameTextFunc)
@@ -64,17 +75,10 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
         {
         }
 
-        private string LongestFrameLengthBlank() => new(' ', _longestFrameText + 1);
-
-        public void Dispose()
-        {
-            Stop();
-            _consoleColors.Dispose();
-            GC.SuppressFinalize(this);
-        }
-
         public void Start()
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             if (HideCursor)
             {
                 Console.CursorVisible = false;
@@ -88,16 +92,6 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             }
 
             _thread.Start();
-        }
-
-        private void SavePosition()
-        {
-            _prevPosition = Console.GetCursorPosition();
-        }
-
-        public void ResetPosition()
-        {
-            Console.SetCursorPosition(_prevPosition.Left, _prevPosition.Top);
         }
 
         public void Stop()
@@ -117,7 +111,6 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
 
             if (!string.IsNullOrWhiteSpace(LastFrame))
             {
-                EraseFrame();
                 DrawFrame(LastFrame);
             }
 
@@ -129,30 +122,42 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             }
         }
 
-        private void EraseFrame()
+        private (int, int) DrawFrame(string frameText)
         {
-            DrawFrame(LongestFrameLengthBlank());
-        }
-
-        private void DrawFrame(string frameText)
-        {
-            Console.Write(LongestFrameLengthBlank());
+            for (int i = 0; i < _mostNumberOfLines; i++)
+            {
+                Console.WriteLine(LongestFrameLengthBlank);
+            }
             Console.SetCursorPosition(Left, Top);
             Console.Write(frameText);
+            return (frameText.Length, CountLines(frameText));
+        }
+
+        private static int CountLines(string text)
+        {            
+            return text.Count(c => c.Equals(Environment.NewLine));
         }
 
         private void DrawFrameLoop()
         {
             while (!_stop)
             {
-                var ft = GetFrameText(_frameNumber++);
-                DrawFrame(ft);
-                // capture longest frame text length for erasing when Stop()'ing
-                if (ft.Length > _longestFrameText)
-                {
-                    _longestFrameText = ft.Length;
+                try
+                {                    
+                    (int written, int lines) = DrawFrame(GetFrameText(_frameNumber++));
+                    // capture longest frame text length for erasing when Stop()'ing
+                    if (written > _longestFrameText ||
+                        lines > _mostNumberOfLines)
+                    {
+                        _longestFrameText = written;
+                        _mostNumberOfLines = lines;
+                    }
+                    Thread.Sleep(FrameDelayMs);
                 }
-                Thread.Sleep(FrameDelayMs);
+                catch (Exception e)
+                {
+                    DrawFrame(e.ToString()+Environment.NewLine);
+                }
             }
         }
 
@@ -160,6 +165,33 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
         protected virtual string GetFrameText(uint frameNumber)
         {
             return _getFrameTextFunc(frameNumber);
+        }
+
+        private void EraseFrame()
+        {
+            for (int i = 0; i < _mostNumberOfLines; i++)
+            {
+                Console.WriteLine(LongestFrameLengthBlank);
+            }
+        }
+
+        private string LongestFrameLengthBlank => new(' ', _longestFrameText + 1);
+
+        public void Dispose()
+        {
+            Stop();
+            _consoleColors.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        private void SavePosition()
+        {
+            _prevPosition = Console.GetCursorPosition();
+        }
+
+        public void ResetPosition()
+        {
+            Console.SetCursorPosition(_prevPosition.Left, _prevPosition.Top);
         }
     }
 }

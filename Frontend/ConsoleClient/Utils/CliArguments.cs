@@ -20,9 +20,13 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             }
         }
 
-        public T? GetArgumentValueForCallableName<T>([CallerMemberName] string? callableName = "") => GetValue<T>(callableName);
-        public T? GetArgumentValueForPropertyName<T>([CallerMemberName] string? propertyName = "") => GetValue<T>(propertyName);
-        public T? GetArgumentValueForMethodName<T>([CallerMemberName] string? methodName = "") => GetValue<T>(methodName);
+        //public T? GetArgumentValueForCallableName<T>([CallerMemberName] string? callableName = "") => GetValue<T>(callableName);
+        //public T? GetArgumentValueForPropertyName<T>([CallerMemberName] string? propertyName = "") => GetValue<T>(propertyName);
+        //public T? GetArgumentValueForMethodName<T>([CallerMemberName] string? methodName = "") => GetValue<T>(methodName);
+
+        public T? GetArgumentValueForCallableName<T>([CallerMemberName] string? callableName = "", T? defaultValue = default) => GetValueOrDefault<T>(callableName, defaultValue);
+        public T? GetArgumentValueForPropertyName<T>([CallerMemberName] string? propertyName = "", T? defaultValue = default) => GetValueOrDefault<T>(propertyName, defaultValue);
+        public T? GetArgumentValueForMethodName<T>([CallerMemberName] string? methodName = "", T? defaultValue = default) => GetValueOrDefault<T>(methodName, defaultValue);
 
         public int Count()
         {
@@ -37,7 +41,7 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             return count;
         }
 
-        public string? GetValue(string? name)
+        public string? GetStringValue(string? name)
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -76,13 +80,25 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
 
         public T? GetValue<T>(string? name)
         {
-            if (GetValue(name) is string value)
+            if (GetStringValue(name) is string value)
             {
                 return Convert.To<T>(value);
             }
             else
             {
                 return default;
+            }
+        }
+
+        public T? GetValueOrDefault<T>(string? name, T? defaultValue = default)
+        {
+            if (GetStringValue(name) is string value)
+            {
+                return Convert.To<T>(value);
+            }
+            else
+            {
+                return defaultValue;
             }
         }
 
