@@ -55,24 +55,27 @@ namespace SubredditStats.Backend.WebApi.Services
 
         private void UpdateSubredditPostsStats()
         {
-            // top posts
-            // sort all posts by upvotes (or vote difference) and add to TopPosts
-            _store.SetTopPosters(_store.AllPostInfos.OrderByDescending(p => p.Score).ToArray());
+            if (_store.AllPostInfos.Any())
+            {               
+                // top posts
+                // sort all posts by upvotes (or vote difference) and add to TopPosts
+                _store.SetTopPosters(_store.AllPostInfos.OrderByDescending(p => p.Score).ToArray());
 
-            // most posters
-            var postCountsByUsername = new Dictionary<string, int>();
-            foreach (var post in new PostInfo.List(_store.AllPostInfos))
-            {
-                postCountsByUsername[post.Author] = postCountsByUsername.GetValueOrDefault(post.Author, 0) + 1;
+                // most posters
+                var postCountsByUsername = new Dictionary<string, int>();
+                foreach (var post in _store.AllPostInfos)
+                {
+                    postCountsByUsername[post.Author] = postCountsByUsername.GetValueOrDefault(post.Author, 0) + 1;
+                }
+
+                var mostPosters = new MostPosterInfo.List();
+                foreach (var kvp in postCountsByUsername)
+                {
+                    mostPosters.Add(new MostPosterInfo(kvp.Key, kvp.Value, _store.Subreddit));
+                }
+
+                _store.SetMostPosters(mostPosters.OrderByDescending(mp => mp.PostCount).ToArray());
             }
-
-            var mostPosters = new MostPosterInfo.List();
-            foreach (var kvp in postCountsByUsername)
-            {
-                mostPosters.Add(new MostPosterInfo(kvp.Key, kvp.Value, _store.Subreddit));
-            }
-
-            _store.SetMostPosters(mostPosters.OrderByDescending(mp => mp.PostCount).ToArray());           
         }
 
         public override void Dispose()
