@@ -43,6 +43,7 @@ namespace SubredditStats.Frontend.ConsoleClient
 
                     using (var postsAnimation = new ConsoleAnimation(GetPostsFrame))
                     {
+                        postsAnimation.Start();
                         WaitForExitChar.Wait(ConsoleKey.P, ConsoleModifiers.Control);
                     }
 
