@@ -59,7 +59,7 @@ namespace SubredditStats.Backend.WebApi.Services
             {               
                 // top posts
                 // sort all posts by upvotes (or vote difference) and add to TopPosts
-                _store.SetTopPosters(_store.AllPostInfos.OrderByDescending(p => p.Score).ToArray());
+                _store.SetTopPosters(_store.AllPostInfos.OrderByDescending(p => p.Score));
 
                 // most posters
                 var postCountsByUsername = new Dictionary<string, int>();
@@ -74,7 +74,7 @@ namespace SubredditStats.Backend.WebApi.Services
                     mostPosters.Add(new MostPosterInfo(kvp.Key, kvp.Value, _store.Subreddit));
                 }
 
-                _store.SetMostPosters(mostPosters.OrderByDescending(mp => mp.PostCount).ToArray());
+                _store.SetMostPosters(mostPosters.OrderByDescending(mp => mp.PostCount));
             }
         }
 
