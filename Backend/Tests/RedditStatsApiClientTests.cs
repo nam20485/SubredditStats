@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tests
 {
-    internal class RedditStatsApiClientTests
+    public class RedditStatsApiClientTests
     {
     }
 }
