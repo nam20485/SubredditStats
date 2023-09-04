@@ -37,7 +37,7 @@ namespace SubredditStats.Backend.WebApi
             builder.Services.AddHttpClient<IRedditStatsClient, RedditStatsApiClient>()
                 .ConfigurePrimaryHttpMessageHandler(() =>
                 {
-                    // use "static" client-side rate limiting (better solution would use rate limiting resposne headers)
+                    // use "static" client-side rate limiting (better solution would use values from rate limiting response headers)
                     return new ClientSideRateLimitedHandler(
                         new TokenBucketRateLimiter(
                             new TokenBucketRateLimiterOptions

@@ -29,12 +29,23 @@ namespace SubredditStats.Backend.Lib.RedditApi
                 _currentAccessToken = await FetchRedditApiAccessToken();
             }
 
+            if (_currentAccessToken is null)
+            {
+                throw new NoApiAccessTokenException("Failed to fetch API access token");
+            }
+
             return _currentAccessToken;
         }
 
         public async Task<RedditApiToken?> FetchRedditApiAccessToken()
         {
             RedditApiToken? apiToken = null;
+
+            if (string.IsNullOrWhiteSpace(RedditApi.ClientId ) || string.IsNullOrWhiteSpace(RedditApi.ClientSecret))
+            {
+                _logger.LogError("Reddit API client ID and/or secret not set. Environment variables REDDIT_API_CLIENT_ID and REDDIT_API_CLIENT_SECRET must be set.");
+                return null;
+            }
 
             var request = new HttpRequestMessage(HttpMethod.Post, RedditApi.TokenUrl);
             var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{RedditApi.ClientId}:{RedditApi.ClientSecret}"));

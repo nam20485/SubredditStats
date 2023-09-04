@@ -41,26 +41,28 @@ namespace SubredditStats.Backend.Lib.RedditApi
                                                                              int limit = 25,
                                                                              string? after = "",
                                                                              int count = 0)
-        {
-            _rateLimitData.LogRateLimitValues();
-
-            var accessToken = await _apiTokenService.GetRedditApiAccessToken();
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.AccessToken);
-
-            var uri = BuildUri(subreddit, sort, limit, after, count);
-            var response = await _httpClient.GetAsync(uri);
-            
-            _rateLimitData.SaveRateLimitValues(response);
-
-            if (response.IsSuccessStatusCode)
+        {                        
+            if (await _apiTokenService.GetRedditApiAccessToken() is RedditApiToken accessToken)
             {
-                var s = await response.Content.ReadAsStringAsync();
-                var redditPostListing = JsonSerializer.Deserialize<RedditPostListing>(s);
-                return redditPostListing;
-            }
-            else if (response.StatusCode == HttpStatusCode.TooManyRequests)
-            {
-                LogRateLimiterKind(response);
+                _rateLimitData.LogRateLimitValues();
+
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.AccessToken);
+
+                var uri = BuildUri(subreddit, sort, limit, after, count);
+                var response = await _httpClient.GetAsync(uri);
+
+                _rateLimitData.SaveRateLimitValues(response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var s = await response.Content.ReadAsStringAsync();
+                    var redditPostListing = JsonSerializer.Deserialize<RedditPostListing>(s);
+                    return redditPostListing;
+                }
+                else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    LogRateLimiterKind(response);
+                }
             }
 
             return null;

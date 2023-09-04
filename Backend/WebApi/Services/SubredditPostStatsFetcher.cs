@@ -90,9 +90,14 @@ namespace SubredditStats.Backend.WebApi.Services
 
                     _backingStore.AddPostInfos(postInfos);
                 }
+                catch (NoApiAccessTokenException naate)
+                {
+                    _logger.LogError(naate, "{ExceptionMessage}", "Exception while fetching subreddit posts:");
+                    break;
+                }
                 catch (Exception e)
                 {
-                    _logger.LogWarning(e, "{ExceptionMessage}", "Exception while fetching subreddit posts");
+                    _logger.LogWarning(e, "{ExceptionMessage}", "Exception while fetching subreddit posts:");
                 }
             }
         }        
