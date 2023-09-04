@@ -17,8 +17,7 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
         public int FrameDelayMs { get; set; }
         public bool HideCursor { get; set; }
         public bool Clear { get; set; }
-        public string LastFrame { get; set; }
-        public bool DelayStart { get; set; }
+        public string LastFrame { get; set; }        
 
         public ConsoleColor ForegroundColor
         {
@@ -58,16 +57,10 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             FrameDelayMs = DefaultDelayMs;
             HideCursor = true;
             Clear = false;
-            LastFrame = "";
-            DelayStart = false;
+            LastFrame = "";           
 
             ForegroundColor = Console.ForegroundColor;
-            BackgroundColor = Console.BackgroundColor;
-
-            if (!DelayStart)
-            {
-                Start();
-            }
+            BackgroundColor = Console.BackgroundColor;          
         }
 
         public ConsoleAnimation(GetFrameTextFunc getFrameTextFunc)
