@@ -1,6 +1,7 @@
 ﻿namespace Tests
 {
-    internal class WebApiTests
+    public class WebApiTests
     {
+
     }
 }
