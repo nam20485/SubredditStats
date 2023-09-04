@@ -65,27 +65,33 @@ namespace SubredditStats.Frontend.ConsoleClient
         private string GetPostsFrame(uint frameNumber)
         {
             var sb = new StringBuilder();
-
-            var strTitle = $"{_psaArgs.PostCount} Top Posts:";
-            sb.AppendLine(strTitle);
-            //sb.AppendLine();
-            sb.AppendLine(new string('-', strTitle.Length));
+            
             var topPosts = _apiClient.GetNumberOfTopPosts(_psaArgs.PostCount);
-            foreach (var topPost in topPosts)
+            if (topPosts.Any())
             {
-                sb.AppendLine(topPost.ToString());
+                var strTitle = $"{_psaArgs.PostCount} Top Posts (/r/{topPosts.First().Subreddit}):";
+                sb.AppendLine(strTitle);
+                //sb.AppendLine();
+                sb.AppendLine(new string('-', strTitle.Length));
+                foreach (var topPost in topPosts)
+                {
+                    sb.AppendLine(topPost.ToString());
+                }
+                sb.AppendLine();
             }
-            sb.AppendLine();
 
-            strTitle = $"{_psaArgs.PostCount} Most Posters:";
-            sb.AppendLine(strTitle);
-            //sb.AppendLine(new string('-', strTitle.Length));
-            //sb.AppendLine();
             var mostPosters = _apiClient.GetNumberOfMostPosters(_psaArgs.PostCount);
-            foreach (var mostPoster in mostPosters)
+            if (mostPosters.Any())
             {
-                sb.AppendLine(mostPoster.ToString());
-            }            
+                var strTitle = $"{_psaArgs.PostCount} Most Posters (/r/{mostPosters.First().Subreddit}):";
+                sb.AppendLine(strTitle);
+                //sb.AppendLine(new string('-', strTitle.Length));
+                //sb.AppendLine();            
+                foreach (var mostPoster in mostPosters)
+                {
+                    sb.AppendLine(mostPoster.ToString());
+                }
+            }
 
             return sb.ToString();
         }        
