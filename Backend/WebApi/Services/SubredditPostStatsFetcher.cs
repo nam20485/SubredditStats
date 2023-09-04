@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using SubredditStats.Backend.Lib.RedditApi;
+﻿using SubredditStats.Backend.Lib.RedditApi;
 using SubredditStats.Backend.Lib.Store;
 using SubredditStats.Shared.Model;
 

@@ -1,6 +1,4 @@
-﻿using SubredditStats.Shared.Model;
-
-namespace SubredditStats.Backend.Lib.RedditApi
+﻿namespace SubredditStats.Backend.Lib.RedditApi
 {
     public interface IRedditStatsClient
     {

@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 using SubredditStats.Shared.Model;
 using SubredditStats.Shared.Utils;

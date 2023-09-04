@@ -1,12 +1,6 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using Microsoft.AspNetCore.Mvc;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-using SubredditStats.Backend.Lib;
-using SubredditStats.Backend.Lib.RedditApi;
 using SubredditStats.Backend.Lib.Store;
-using SubredditStats.Backend.WebApi.Services;
 using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.WebApi.Controllers

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SubredditStats.Backend.Lib.RedditApi
-{  
+﻿namespace SubredditStats.Backend.Lib.RedditApi
+{
     public class RedditPostListing
     {
         public string kind { get; set; }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SubredditStats.Backend.Lib.Utils
+﻿namespace SubredditStats.Backend.Lib.Utils
 {
     // translated from https://stackoverflow.com/a/7728872/4848067
 
