@@ -2,6 +2,7 @@
 using System.Text.Json;
 
 using SubredditStats.Shared.Model;
+using SubredditStats.Shared.Utils;
 
 namespace SubredditStats.Shared.Client
 {
@@ -31,26 +32,32 @@ namespace SubredditStats.Shared.Client
 
         public bool VerifyConnection()
         {
-            return _httpClient.Send(new HttpRequestMessage()
+            using var response = _httpClient.Send(new HttpRequestMessage()
             {
                 RequestUri = new Uri(VerifyEndpoint, UriKind.Relative),
                 Method = HttpMethod.Get
 
-            }).IsSuccessStatusCode;
+            });
+            return response.IsSuccessStatusCode;
         }
 
         private TResponse[] FetchRequest<TResponse>(string uri)
         {
-            var response = _httpClient.Send(new HttpRequestMessage(HttpMethod.Get, new Uri(uri, UriKind.Relative)));
+            using var response = _httpClient.Send(new HttpRequestMessage(HttpMethod.Get, new Uri(uri, UriKind.Relative)));
             if (response.IsSuccessStatusCode)
             {
-                if (JsonSerializer.Deserialize<TResponse[]>(response.Content.ReadAsStream(), new JsonSerializerOptions(JsonSerializerDefaults.Web)) is TResponse[] responseValues)
+                if (DeserializeValue<TResponse[]>(response) is TResponse[] responseValues)
                 {
                     return responseValues;
                 }
             }
 
             return Array.Empty<TResponse>();
+        }
+
+        private static TValue? DeserializeValue<TValue>(HttpResponseMessage response)
+        {
+            return JsonSerializer.Deserialize<TValue>(response.Content.ReadAsStream(), GlobalJsonSerializerOptions.Options);
         }
 
         public void Dispose()
