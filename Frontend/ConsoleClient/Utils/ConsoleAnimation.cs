@@ -78,8 +78,7 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             }
 
             // if no Left, Top provided, then use the current position (i.e. just after the last Console.Write)
-            if (Left == -1 &&
-                Top == -1)
+            if (Left == -1 && Top == -1)
             {
                 (Left, Top) = Console.GetCursorPosition();
             }
