@@ -41,7 +41,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
             _httpClient.BaseAddress = new Uri(RedditApi.ApiUri);
             _httpClient.DefaultRequestHeaders.UserAgent.Add(RedditApi.MakeUserAgentHeader());
 
-            _rateLimitData = new (_logger);
+            _rateLimitData = new (_logger, RedditApi.RateLimitPeriodS);
         }
 
         public async Task<RedditPostListing?> FetchSubredditPostListingSlice(string subreddit,

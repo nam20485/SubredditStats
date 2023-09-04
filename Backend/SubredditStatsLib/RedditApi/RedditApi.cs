@@ -27,5 +27,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
         public const string UserAgentVersion = "1.0";
 
         public static ProductInfoHeaderValue MakeUserAgentHeader() => new (RedditApi.UserAgentName, UserAgentVersion);
+
+        public const int RateLimitPeriodS = 600;
     }
 }

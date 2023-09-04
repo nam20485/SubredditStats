@@ -10,20 +10,22 @@ namespace SubredditStats.Backend.Lib.Utils
 {
     public class RateLimitData
     {
-        public const int RateLimitPeriodInS = 600;
+        private readonly int _rateLimitPeriodS = 600;
 
         private readonly ILogger _logger;
 
-        public RateLimitData(ILogger logger)
+        public RateLimitData(ILogger logger, int rateLimitPeriodS)
         {
             _logger = logger;
+            _rateLimitPeriodS = rateLimitPeriodS;
         }
+
 
         public double LastRateLimitUsed { get; set; }
         public double LastRateLimitRemaining { get; set; }
         // number of seconds remaining until new period starts
         public int LastRateLimitPeriodReset { get; set; }
-        public int RateLimitPeriodPassed => RateLimitPeriodInS - LastRateLimitPeriodReset;
+        public int RateLimitPeriodPassed => _rateLimitPeriodS - LastRateLimitPeriodReset;
         public double SecondsPerRequestRate => RateLimitPeriodPassed / LastRateLimitUsed;
         public double RequestsPerSecondRate => LastRateLimitUsed / RateLimitPeriodPassed;
 
