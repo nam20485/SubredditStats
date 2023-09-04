@@ -32,12 +32,13 @@ namespace SubredditStats.Shared.Client
 
         public bool VerifyConnection()
         {
-            using var response = _httpClient.Send(new HttpRequestMessage()
+            using var request = new HttpRequestMessage()
             {
                 RequestUri = new Uri(VerifyEndpoint, UriKind.Relative),
                 Method = HttpMethod.Get
 
-            });
+            };
+            using var response = _httpClient.Send(request);
             return response.IsSuccessStatusCode;
         }
 
