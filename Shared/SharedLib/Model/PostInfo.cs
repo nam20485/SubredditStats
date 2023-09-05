@@ -35,12 +35,12 @@ namespace SubredditStats.Shared.Model
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine($"\"{PostTitle}\"");            
-            sb.AppendLine($"\t- {Author} (↑{UpVotes} ↓{DownVotes})");            
-            sb.Append($"\t- {PostUrl}");            
+            sb.AppendLine($"\"{PostTitle}\"");
+            sb.AppendLine($"\t- {Author} (↑{UpVotes} ↓{DownVotes})");
+            sb.Append($"\t- {PostUrl}");
 
             return sb.ToString();
-        }
+        }        
 
         public class StringDictionary : Dictionary<string, PostInfo>
         {
@@ -51,7 +51,37 @@ namespace SubredditStats.Shared.Model
         public class List : List<PostInfo>
         {
             public List() : base() { }
-            public List(IEnumerable<PostInfo> collection) : base(collection) { }            
-        }        
+            public List(IEnumerable<PostInfo> collection) : base(collection) { }     
+            
+            public static List CreateRandom(int count)
+            {
+                var list = new List();
+                
+                for (var i = 0; i < count; i++)
+                {
+                    list.Add(PostInfo.CreateRandom());
+                }
+
+                return list;
+            }
+        }
+
+        public static PostInfo CreateRandom()
+        {
+            var random = new Random();
+
+            var subreddit = $"subreddit{random.Next(0, 1000)}";
+            var postTitle = $"{subreddit} Post Title {random.Next(0, 1000)}";
+            var upVotes = random.Next(0, 1000);
+            var downVotes = random.Next(0, 1000);
+            var score = upVotes - downVotes;
+            var postUrl = $"https://www.reddit.com/r/subreddit/{subreddit}";
+            var author = $"username{random.Next(0, 1000)}";
+            var apiName = $"apiName{random.Next(0, 1000)}";
+            var created = DateTime.UtcNow;
+            var fetched = DateTime.UtcNow;
+
+            return new SubredditStats.Shared.Model.PostInfo(postTitle, upVotes, downVotes, score, postUrl, subreddit, author, apiName, created, fetched);
+        }
     }
 }
