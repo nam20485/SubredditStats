@@ -9,9 +9,9 @@ namespace SubredditStats.Shared.Client
     {
         //https://localhost:7199/api/SubredditStats/all_posts/{count}
         
-        private const string AllPostsEndpoint = "api/SubredditStats/all_posts";
-        private const string TopPostsEndpoint = "api/SubredditStats/top_posts";
-        private const string MostPostersEndpoint = "api/SubredditStats/most_posters";
+        public const string AllPostsEndpoint = "api/SubredditStats/all_posts";
+        public const string TopPostsEndpoint = "api/SubredditStats/top_posts";
+        public const string MostPostersEndpoint = "api/SubredditStats/most_posters";
         private const string VerifyEndpoint = AllPostsEndpoint + "/0";
 
         private readonly HttpClient _httpClient;
