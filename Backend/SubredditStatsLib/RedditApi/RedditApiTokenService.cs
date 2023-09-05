@@ -24,9 +24,16 @@ namespace SubredditStats.Backend.Lib.RedditApi
 
         public async Task<RedditApiToken?> GetRedditApiAccessToken()
         {
+            // try from environment first             
             if (_currentAccessToken is null || _currentAccessToken.IsExpired)
             {
-                _currentAccessToken = await FetchRedditApiAccessToken();
+                _currentAccessToken = GetApiAccessTokenFromEnvironment();                
+            }
+
+            // fetch from server
+            if (_currentAccessToken is null || _currentAccessToken.IsExpired)
+            {
+                _currentAccessToken = await FetchApiAccessToken();
             }
 
             if (_currentAccessToken is null)
@@ -37,7 +44,23 @@ namespace SubredditStats.Backend.Lib.RedditApi
             return _currentAccessToken;
         }
 
-        public async Task<RedditApiToken?> FetchRedditApiAccessToken()
+        private static RedditApiToken? GetApiAccessTokenFromEnvironment()
+        {
+            if (Environment.GetEnvironmentVariable("REDDIT_API_ACCESS_TOKEN") is string tokenValue &&
+                !string.IsNullOrWhiteSpace(tokenValue))
+            {
+                return new RedditApiToken()
+                {
+                    AccessToken = tokenValue,
+                    ExpiresInS = 60 * 60        // 1 hour for "artifically" inserted token values                    
+                };
+            }
+
+            return null;
+
+        }
+
+        public async Task<RedditApiToken?> FetchApiAccessToken()
         {
             RedditApiToken? apiToken = null;
 
@@ -47,7 +70,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
                 return null;
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Post, RedditApi.TokenUrl);
+            using var request = new HttpRequestMessage(HttpMethod.Post, RedditApi.TokenUrl);
             var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{RedditApi.ClientId}:{RedditApi.ClientSecret}"));
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
             request.Headers.UserAgent.Add(RedditApi.MakeUserAgentHeader());
@@ -56,7 +79,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
                 {"grant_type", "client_credentials"}
             });
 
-            var response = await _httpClient.SendAsync(request);
+            using var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 apiToken = await response.Content.ReadFromJsonAsync<RedditApiToken>();

@@ -18,7 +18,7 @@ namespace SubredditStats.Backend.Lib.RedditApi
 
 
         [JsonIgnore]
-        public DateTime RetrievedAt { get; set; } = DateTime.UtcNow;
+        public DateTime RetrievedAt { get; }
 
         [JsonIgnore]
         public TimeSpan Duration => new(0, 0, ExpiresInS);
@@ -28,5 +28,10 @@ namespace SubredditStats.Backend.Lib.RedditApi
 
         [JsonIgnore]
         public bool IsExpired => ExpiresAt <= DateTime.UtcNow;
+
+        public RedditApiToken()
+        {
+            RetrievedAt = DateTime.UtcNow;
+        }
     }
 }

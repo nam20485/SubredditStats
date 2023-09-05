@@ -5,7 +5,8 @@ namespace SubredditStats.Backend.Lib.RedditApi
     public class RedditApi
     {
         public static string? ClientId => Environment.GetEnvironmentVariable("REDDIT_API_CLIENT_ID");
-        public static string? ClientSecret => Environment.GetEnvironmentVariable("REDDIT_API_CLIENT_SECRET");        
+        public static string? ClientSecret => Environment.GetEnvironmentVariable("REDDIT_API_CLIENT_SECRET");
+        public static string AccessTokenFromEnvironment => Environment.GetEnvironmentVariable("REDDIT_API_ACCESS_TOKEN");
 
         public const string TokenUrl = "https://www.reddit.com/api/v1/access_token";
         public const string ApiUri = "https://oauth.reddit.com";
@@ -21,6 +22,6 @@ namespace SubredditStats.Backend.Lib.RedditApi
 
         public static ProductInfoHeaderValue MakeUserAgentHeader() => new (RedditApi.UserAgentName, UserAgentVersion);
 
-        public const int RateLimitPeriodS = 600;
+        public const int RateLimitPeriodS = 600; 
     }
 }
