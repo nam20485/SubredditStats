@@ -16,7 +16,7 @@ namespace SubredditStats.Backend.WebApi.Controllers
             _store = store;
         }
 
-        [HttpGet("top_posts/{count:int}")]
+        [HttpGet("top_posts/{Count:int}")]
         public ActionResult<IEnumerable<PostInfo>> GetTopPosts([FromRoute] RequestData data)
         {
             if (!ModelState.IsValid)
@@ -24,7 +24,7 @@ namespace SubredditStats.Backend.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(_store.TopPosts.Take(data.Count));
+            return Ok(_store.GetNumberOfTopPosts(data.Count));
         }
 
         [HttpGet("top_posts")]
@@ -33,7 +33,7 @@ namespace SubredditStats.Backend.WebApi.Controllers
             return _store.TopPosts;
         }
 
-        [HttpGet("most_posters/{count}")]
+        [HttpGet("most_posters/{Count:int}")]
         public ActionResult<IEnumerable<MostPosterInfo>> GetMostPosters([FromRoute] RequestData data)
         {
             if (! ModelState.IsValid)
@@ -41,7 +41,7 @@ namespace SubredditStats.Backend.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(_store.MostPosters.Take(data.Count));
+            return Ok(_store.GetNumberOfMostPosters(data.Count));
         }
 
         [HttpGet("most_posters")]
@@ -50,7 +50,7 @@ namespace SubredditStats.Backend.WebApi.Controllers
             return _store.MostPosters;
         }
 
-        [HttpGet("all_posts/{count}")]
+        [HttpGet("all_posts/{Count:int}")]
         public ActionResult<IEnumerable<PostInfo>> GetAllPosts([FromRoute] RequestData data)
         {
             if (!ModelState.IsValid)
@@ -58,7 +58,7 @@ namespace SubredditStats.Backend.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(_store.AllPostInfos.Take(data.Count));
+            return Ok(_store.GetNumberOfAllPostInfos(data.Count));
         }
 
         [HttpGet("all_posts")]
