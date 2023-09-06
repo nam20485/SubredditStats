@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using FluentAssertions;
-
 using Microsoft.AspNetCore.Mvc;
 
+using FluentAssertions;
+using Xunit;
 using Moq;
 
 using SubredditStats.Backend.Lib.Store;
@@ -15,58 +15,56 @@ using SubredditStats.Backend.WebApi.Controllers;
 using SubredditStats.Shared;
 using SubredditStats.Shared.Model;
 
-using Xunit;
-
 namespace Tests
 {
     public class SubredditStatsControllerTests
     {
-        private const int RandomResponseObjectCount = 100;
+        private const int ResponseObjectCount = 100;
 
         [Fact]
-        public void Test_ControllerActions_GetAllPosts()
+        public void ControllerActions_ShouldRespondSuccessfully_GetAllPosts()
         {
-            var controller = CreateControllerWithMockSource();
+            var controller = TestUtils.CreateControllerWithMockSource(ResponseObjectCount);
 
             var allPosts = controller.GetAllPosts();
             allPosts.Should().NotBeNull();
             allPosts.Should().NotBeEmpty();
-            allPosts.Should().HaveCount(RandomResponseObjectCount);            
+            allPosts.Should().HaveCount(ResponseObjectCount);            
             allPosts.Should().BeOfType(typeof(PostInfo[]));
         }
 
         [Fact]
-        public void Test_ControllerActions_GetTopPosts()
+        public void ControllerActions_ShouldRespondSuccessfully_GetTopPosts()
         {
-            var controller = CreateControllerWithMockSource();
+            var controller = TestUtils.CreateControllerWithMockSource(ResponseObjectCount);
 
             var topPosts = controller.GetTopPosts();
             topPosts.Should().NotBeNull();
             topPosts.Should().NotBeEmpty();
-            topPosts.Should().HaveCount(RandomResponseObjectCount);
+            topPosts.Should().HaveCount(ResponseObjectCount);
             topPosts.Should().BeOfType(typeof(PostInfo[]));
         }
 
         [Fact]
-        public void Test_ControllerActions_GetMostPosters()
+        public void ControllerActions_ShouldRespondSuccessfully_GetMostPosters()
         {
-            var controller = CreateControllerWithMockSource();
+            var controller = TestUtils.CreateControllerWithMockSource(ResponseObjectCount);
 
             var mostPosters = controller.GetMostPosters();
             mostPosters.Should().NotBeNull();
             mostPosters.Should().NotBeEmpty();
-            mostPosters.Should().HaveCount(RandomResponseObjectCount);
+            mostPosters.Should().HaveCount(ResponseObjectCount);
             mostPosters.Should().BeOfType(typeof(MostPosterInfo[]));
         }
 
         [Fact]
-        public void Test_ControllerActions_GetNumberOfAllPosts()
+        public void ControllerActions_ShouldRespondSuccessfully_GetNumberOfAllPosts()
         {
-            var controller = CreateControllerWithMockSource();
+            var controller = TestUtils.CreateControllerWithMockSource(ResponseObjectCount);
 
             var actionResult = controller.GetNumberOfAllPosts(new RequestData
             {
-                Count = RandomResponseObjectCount
+                Count = ResponseObjectCount
             });
 
             actionResult.Should().NotBeNull();
@@ -82,17 +80,17 @@ namespace Tests
             var resultValue = objectResult.Value as PostInfo[];
             resultValue.Should().NotBeNull();
             resultValue.Should().NotBeEmpty();
-            resultValue.Should().HaveCount(RandomResponseObjectCount);
+            resultValue.Should().HaveCount(ResponseObjectCount);
         }
 
         [Fact]
-        public void Test_ControllerActions_GetNumberOfTopPosts()
+        public void ControllerActions_ShouldRespondSuccessfully_GetNumberOfTopPosts()
         {
-            var controller = CreateControllerWithMockSource();
+            var controller = TestUtils.CreateControllerWithMockSource(ResponseObjectCount);
 
             var actionResult = controller.GetNumberOfTopPosts(new RequestData
             {
-                Count = RandomResponseObjectCount
+                Count = ResponseObjectCount
             });
 
             actionResult.Should().NotBeNull();
@@ -108,17 +106,17 @@ namespace Tests
             var resultValue = objectResult.Value as PostInfo[];
             resultValue.Should().NotBeNull();
             resultValue.Should().NotBeEmpty();
-            resultValue.Should().HaveCount(RandomResponseObjectCount);
+            resultValue.Should().HaveCount(ResponseObjectCount);
         }
 
         [Fact]
-        public void Test_ControllerActions_GetNumberOfMostPosters()
+        public void ControllerActions_ShouldRespondSuccessfully_GetNumberOfMostPosters()
         {
-            var controller = CreateControllerWithMockSource();
+            var controller = TestUtils.CreateControllerWithMockSource(ResponseObjectCount);
 
             var actionResult = controller.GetNumberOfMostPosters(new RequestData
             {
-                Count = RandomResponseObjectCount
+                Count = ResponseObjectCount
             });
 
             actionResult.Should().NotBeNull();
@@ -134,34 +132,7 @@ namespace Tests
             var resultValue = objectResult.Value as MostPosterInfo[];
             resultValue.Should().NotBeNull();
             resultValue.Should().NotBeEmpty();
-            resultValue.Should().HaveCount(RandomResponseObjectCount);            
-        }
-
-        private static SubredditStatsController CreateControllerWithMockSource()
-        {
-            var mockSource = CreateMockSubredditPostStatsSource();
-            return new SubredditStatsController(mockSource.Object);
-        }
-
-        private static Mock<ISubredditPostStatsSource> CreateMockSubredditPostStatsSource()
-        {
-            var mockRepository = new Mock<ISubredditPostStatsSource>();
-
-            mockRepository.Setup(x => x.AllPostInfos)
-                .Returns(PostInfo.List.CreateRandom(RandomResponseObjectCount).ToArray());
-            mockRepository.Setup(x => x.TopPosts)
-                .Returns(PostInfo.List.CreateRandom(RandomResponseObjectCount).ToArray());
-            mockRepository.Setup(x => x.MostPosters)
-                .Returns(MostPosterInfo.List.CreateRandom(RandomResponseObjectCount).ToArray());
-
-            mockRepository.Setup(x => x.GetNumberOfAllPostInfos(RandomResponseObjectCount))
-                .Returns(PostInfo.List.CreateRandom(RandomResponseObjectCount).ToArray());
-            mockRepository.Setup(x => x.GetNumberOfTopPosts(RandomResponseObjectCount))
-                .Returns(PostInfo.List.CreateRandom(RandomResponseObjectCount).ToArray());
-            mockRepository.Setup(x => x.GetNumberOfMostPosters(RandomResponseObjectCount))
-                .Returns(MostPosterInfo.List.CreateRandom(RandomResponseObjectCount).ToArray());
-
-            return mockRepository;
-        }
+            resultValue.Should().HaveCount(ResponseObjectCount);            
+        }        
     }
 }
