@@ -7,7 +7,7 @@
     <UserSecretsId>da3bdb44-b460-4bb5-90f3-da81591e766a</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <RootNamespace>SubredditStats.Backend.WebApi</RootNamespace>
-	<DockerfileFile>..\..\Dockerfile.backend</DockerfileFile>
+	<DockerfileFile>..\..\Dockerfile.webapi</DockerfileFile>
 	<DockerfileContext>.</DockerfileContext>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
