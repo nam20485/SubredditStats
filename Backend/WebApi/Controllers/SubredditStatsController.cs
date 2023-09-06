@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using SubredditStats.Backend.Lib.Store;
+using SubredditStats.Shared;
 using SubredditStats.Shared.Model;
 
 namespace SubredditStats.Backend.WebApi.Controllers
@@ -9,62 +10,62 @@ namespace SubredditStats.Backend.WebApi.Controllers
     [ApiController]
     public class SubredditStatsController : ControllerBase
     {        
-        private readonly ISubredditPostStatsStore _store;
+        private readonly ISubredditPostStatsSource _source;
 
-        public SubredditStatsController(ISubredditPostStatsStore store)
+        public SubredditStatsController(ISubredditPostStatsSource source)
         {
-            _store = store;
+            _source = source;
         }
 
         [HttpGet("top_posts/{Count:int}")]
-        public ActionResult<IEnumerable<PostInfo>> GetTopPosts([FromRoute] RequestData data)
+        public ActionResult<PostInfo[]> GetNumberOfTopPosts([FromRoute] RequestData data)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            return Ok(_store.GetNumberOfTopPosts(data.Count));
+            return Ok(_source.GetNumberOfTopPosts(data.Count));
         }
 
         [HttpGet("top_posts")]
-        public ActionResult<IEnumerable<PostInfo>> GetTopPosts()
+        public PostInfo[] GetTopPosts()
         {
-            return _store.TopPosts;
+            return _source.TopPosts;
         }
 
         [HttpGet("most_posters/{Count:int}")]
-        public ActionResult<IEnumerable<MostPosterInfo>> GetMostPosters([FromRoute] RequestData data)
+        public ActionResult<MostPosterInfo[]> GetNumberOfMostPosters([FromRoute] RequestData data)
         {
             if (! ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            return Ok(_store.GetNumberOfMostPosters(data.Count));
+            return Ok(_source.GetNumberOfMostPosters(data.Count));
         }
 
         [HttpGet("most_posters")]
-        public IEnumerable<MostPosterInfo> GetMostPosters()
+        public MostPosterInfo[] GetMostPosters()
         {
-            return _store.MostPosters;
+            return _source.MostPosters;
         }
 
         [HttpGet("all_posts/{Count:int}")]
-        public ActionResult<IEnumerable<PostInfo>> GetAllPosts([FromRoute] RequestData data)
+        public ActionResult<PostInfo[]> GetNumberOfAllPosts([FromRoute] RequestData data)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            return Ok(_store.GetNumberOfAllPostInfos(data.Count));
+            return Ok(_source.GetNumberOfAllPostInfos(data.Count));
         }
 
         [HttpGet("all_posts")]
-        public IEnumerable<PostInfo> GetAllPosts()
+        public PostInfo[] GetAllPosts()
         {
-            return _store.AllPostInfos;
+            return _source.AllPostInfos;
         }     
 
         //[HttpGet("top_posts/{subreddit}")]
