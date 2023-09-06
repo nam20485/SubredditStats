@@ -39,7 +39,7 @@ Once the Web Api project starts, you should see, or can navigate to the followin
 
 >It will verify the Web Api server connection when it starts up. If that fails, it will print an error exception message. In this case, ensure that the Web Api is running, and listening for requests at the Url specificed in the first line of the console client output.
 
-## Running
+## Running (Recap)
 
 Once environment variables are set and both solutions are open:
 
