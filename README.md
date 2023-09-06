@@ -11,11 +11,11 @@ Backend Web API application to collect and serve statistics about a given subred
 1. Open Visual Studio solutions:
     1. `\Backend\Backend.sln`
     1. `\Frontend\Frontend.sln`
+1. Specify the subreddit you would like to collect stats on:
+    1. Edit the `SubredditName` value in the `appsettings.json` file in the Backend project. (`\Backend\WebApi\appsettings.json`).
 1. Build Solutions
     1. Use `Release`` configuration for both
     1. Use `http` launch configuration for Backend
-1. Specify the subreddit you would like to collect stats on:
-    1. Edit the `SubredditName` value in the `appsettings.json` file in the Backend project. (`\Backend\WebApi\appsettings.json`).
 
 >Remember to set the environment variables **before** you run the command prompt or open Visual Studio. If they are already open, you **must close and restart them** for them to be able to see the changes to your envionment variables!
 
@@ -28,13 +28,6 @@ Build and run this first. It will start the Web API server listening at <http://
 >You may need to set the Web Api project as the startup project before the first time you run it.
 
 If you have not set the client credentials environment variables, you will get an exception message in the console output.
-
-#### Swagger & ReDoc API Docs
-
-Once the Web Api project starts, you should see, or can navigate to the following addresses to see the Swagger API UI and ReDoc API documentation:
-
-* Swagger: <http://localhost:5159/swagger>
-* ReDoc: <http://localhost:5159/api-docs>
 
 ### Frontend
 
@@ -50,3 +43,10 @@ Once environment variables are set and both solutions are open:
     1. The Swagger page will open
 1. Then run the Frontend solution ConsoleClient project.
     1. The console client will begin displaying statistics.
+
+## Swagger & ReDoc API Docs
+
+Once the Web Api project starts, you should see, or can navigate to the following addresses to see the Swagger API UI and ReDoc API documentation:
+
+* Swagger: <http://localhost:5159/swagger>
+* ReDoc: <http://localhost:5159/api-docs>
