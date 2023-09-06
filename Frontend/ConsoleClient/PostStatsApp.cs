@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 using SubredditStats.Frontend.ConsoleClient.Utils;
 using SubredditStats.Shared.Client;
@@ -22,7 +17,7 @@ namespace SubredditStats.Frontend.ConsoleClient
         public PostStatsApp(string[] args)
         {
             _psaArgs = new PostStatsAppCliArguments(args);            
-            _apiClient = new SubRedditPostStatsClient(new HttpClient()
+            _apiClient = new SubRedditPostStatsApiClient(new HttpClient()
             {
                 BaseAddress = new Uri(_psaArgs.ApiUrl)
             });
@@ -97,7 +92,7 @@ namespace SubredditStats.Frontend.ConsoleClient
             return sb.ToString();
         }        
 
-        private static void SimulateException<TException>() where TException : Exception, new()
+        private static void ThrowA<TException>() where TException : Exception, new()
         {
             throw new TException();            
         }
