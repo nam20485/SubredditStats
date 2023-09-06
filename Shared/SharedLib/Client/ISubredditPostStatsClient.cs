@@ -2,6 +2,6 @@
 {
     public interface ISubredditPostStatsClient : ISubredditPostStatsSource
     {
-        bool VerifyConnection();
+        bool VerifyConnection(out string message);
     }
 }

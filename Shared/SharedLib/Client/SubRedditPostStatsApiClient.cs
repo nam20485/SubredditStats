@@ -29,16 +29,26 @@ namespace SubredditStats.Shared.Client
         public MostPosterInfo[] GetNumberOfMostPosters(int count) => FetchRequest<MostPosterInfo>($"{MostPostersEndpoint}/{count}");
         public PostInfo[] GetNumberOfTopPosts(int count) => FetchRequest<PostInfo>($"{TopPostsEndpoint}/{count}");
 
-        public bool VerifyConnection()
+        public bool VerifyConnection(out string message)
         {
-            using var request = new HttpRequestMessage()
+            try
             {
-                RequestUri = new Uri(VerifyEndpoint, UriKind.Relative),
-                Method = HttpMethod.Get
+                message = "Success";
 
-            };
-            using var response = _httpClient.Send(request);
-            return response.IsSuccessStatusCode;
+                using var request = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(VerifyEndpoint, UriKind.Relative),
+                    Method = HttpMethod.Get
+
+                };
+                using var response = _httpClient.Send(request);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception e)
+            {
+                message = e.ToString();
+                return false;
+            }
         }
 
         private TResponse[] FetchRequest<TResponse>(string uri)
