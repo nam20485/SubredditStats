@@ -20,7 +20,7 @@ Backend Web API application to collect and serve statistics about a given subred
 
 .NET Core 7 ASP.NET Core Web API application.
 
-Run this first. It will start the Web API server listening at <https://localhost:7199>. Once it starts, it begins collecting statistics for the subreddit specified. Select the `Release` configuration and run the Web API project.
+Run this first. It will start the Web API server listening at <https://localhost:7199>. Once it starts, it begins collecting statistics for the subreddit specified. Select the `Release` configuration and run the `WebApi` project.
 
 >You may need to set the Web Api project as the startup project before the first time you run it.
 
@@ -35,7 +35,7 @@ Once the Web Api project starts, you should see, or can navigate to the followin
 
 ### Frontend
 
-.NET Core 7 Console client application that fetches the statistics from the Web API and displays them in the console, updating continuously. Select the `Release` configuration and run the ConsoleClient project.
+.NET Core 7 Console client application that fetches the statistics from the Web API and displays them in the console, updating continuously. Ruin this after the Backend WebApi project has started. Select the `Release` configuration and run the `ConsoleClient` project.
 
 >It will verify the Web Api server connection when it starts up. If that fails, it will print an error exception message. In this case, ensure that the Web Api is running, and listening for requests at the Url specificed in the first line of the console client output.
 
