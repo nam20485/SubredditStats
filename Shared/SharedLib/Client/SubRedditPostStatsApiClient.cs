@@ -5,7 +5,7 @@ using SubredditStats.Shared.Utils;
 
 namespace SubredditStats.Shared.Client
 {
-    public class SubRedditPostStatsClient : ISubredditPostStatsClient, IDisposable
+    public class SubRedditPostStatsApiClient : ISubredditPostStatsClient, IDisposable
     {
         //https://localhost:7199/api/SubredditStats/all_posts/{count}
         
@@ -16,7 +16,7 @@ namespace SubredditStats.Shared.Client
 
         private readonly HttpClient _httpClient;
 
-        public SubRedditPostStatsClient(HttpClient httpClient)
+        public SubRedditPostStatsApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -62,7 +62,9 @@ namespace SubredditStats.Shared.Client
 
         public void Dispose()
         {
-            _httpClient.Dispose();
+            _httpClient.Dispose();            
+
+            GC.SuppressFinalize(this);
         }
     }
 }
