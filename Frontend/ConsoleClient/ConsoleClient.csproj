@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<RootNamespace>SubredditStats.Frontend.ConsoleClient</RootNamespace>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>	  
+	<DockerfileFile>..\..\Dockerfile.consoleclient</DockerfileFile>
+	<DockerfileContext>.</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\SharedLib\SharedLib.csproj" />
+  </ItemGroup>
+
+</Project>
