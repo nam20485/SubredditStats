@@ -29,7 +29,7 @@ namespace SubredditStats.Frontend.ConsoleClient
             {
                 Console.WriteLine($"PostStatsApp Client v0.9 - [api: {_psaArgs.ApiUrl}]\n");
 
-                if (_apiClient.VerifyConnection())
+                if (_apiClient.VerifyConnection(out string message))
                 {
                     using (var consoleColors = new ConsoleColors(ConsoleColor.DarkGray))
                     {
@@ -46,7 +46,7 @@ namespace SubredditStats.Frontend.ConsoleClient
                 }
                 else
                 {
-                    Console.WriteLine("Cannot reach api: verify API server is running and accessible at the above url!");
+                    Console.WriteLine($"Cannot reach api: verify API server is running and accessible at the above url!\n({message})");
                     return ExitCode.ApiUnreachable;
                 }
             }
