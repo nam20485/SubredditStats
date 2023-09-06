@@ -67,13 +67,12 @@ namespace SubredditStats.Frontend.ConsoleClient
             {
                 var strTitle = $"{_psaArgs.PostCount} Top Posts (/r/{topPosts.First().Subreddit}):";
                 sb.AppendLine(strTitle);
-                //sb.AppendLine();
                 sb.AppendLine(new string('-', strTitle.Length));
                 foreach (var topPost in topPosts)
                 {
                     sb.AppendLine(topPost.ToString());
                 }
-                sb.AppendLine();
+                //sb.AppendLine();
             }
 
             var mostPosters = _apiClient.GetNumberOfMostPosters(_psaArgs.PostCount);
@@ -81,8 +80,7 @@ namespace SubredditStats.Frontend.ConsoleClient
             {
                 var strTitle = $"{_psaArgs.PostCount} Most Posters (/r/{mostPosters.First().Subreddit}):";
                 sb.AppendLine(strTitle);
-                //sb.AppendLine(new string('-', strTitle.Length));
-                //sb.AppendLine();            
+                sb.AppendLine(new string('-', strTitle.Length));
                 foreach (var mostPoster in mostPosters)
                 {
                     sb.AppendLine(mostPoster.ToString());
