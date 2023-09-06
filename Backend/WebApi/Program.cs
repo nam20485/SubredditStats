@@ -5,6 +5,7 @@ using SubredditStats.Backend.Lib.RedditApi;
 using SubredditStats.Backend.Lib.Store;
 using SubredditStats.Backend.Lib.Utils;
 using SubredditStats.Backend.WebApi.Services;
+using SubredditStats.Shared;
 
 namespace SubredditStats.Backend.WebApi
 {
@@ -51,7 +52,12 @@ namespace SubredditStats.Backend.WebApi
                                 AutoReplenishment = true
                             }));
                 });
-            builder.Services.AddSingleton<ISubredditPostStatsStore, MemoryStore>();            
+
+            ISubredditPostStatsStore memoryStore = new MemoryStore();
+            // same singleton instance registered in DI for both interface types
+            builder.Services.AddSingleton<ISubredditPostStatsSource>(memoryStore);
+            builder.Services.AddSingleton<ISubredditPostStatsStore>(memoryStore);
+            //builder.Services.AddSingleton<ISubredditPostStatsStore>(new MemoryStore());            
             builder.Services.AddHostedService<SubredditPostStatsFetcher>();
             builder.Services.AddHostedService<SubredditPostStatsCalculator>();
 
