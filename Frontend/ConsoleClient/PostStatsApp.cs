@@ -46,7 +46,7 @@ namespace SubredditStats.Frontend.ConsoleClient
                 }
                 else
                 {
-                    Console.WriteLine($"Cannot reach api: verify API server is running and accessible at the above url!\n({message})");
+                    Console.WriteLine($"Cannot reach api: verify API server is running and accessible at the above url!\n\n({message})");
                     return ExitCode.ApiUnreachable;
                 }
             }
