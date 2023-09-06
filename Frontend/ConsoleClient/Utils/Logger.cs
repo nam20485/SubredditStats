@@ -21,7 +21,7 @@ namespace SubredditStats.Frontend.ConsoleClient.Utils
             : this(DefaultLogFile)
         { }
 
-        public void LogError(string message, params object[] formatParams)
+        public static void LogError(string message, params object[] formatParams)
         {
             var s = string.Format(message, formatParams);
             Console.Out.WriteLine(s);
