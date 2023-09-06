@@ -5,16 +5,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0.400-bullseye-slim-amd64 AS build
 WORKDIR /src
-COPY ["Backend", "Backend/"]
+COPY ["Frontend", "Frontend/"]
 COPY ["Shared", "Shared/"]
-RUN dotnet restore "Backend/WebApi/WebApi.csproj"
-WORKDIR "/src/Backend/WebApi"
-RUN dotnet build "WebApi.csproj" -c Release -o /app/build --no-restore
+RUN dotnet restore "Frontend/ConsoleClient/ConsoleClient.csproj"
+WORKDIR "/src/Frontend/ConsoleClient"
+RUN dotnet build "ConsoleClient.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
-RUN dotnet publish "WebApi.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
+RUN dotnet publish "ConsoleClient.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebApi.dll"]
+ENTRYPOINT ["dotnet", "ConsoleClient.dll"]
