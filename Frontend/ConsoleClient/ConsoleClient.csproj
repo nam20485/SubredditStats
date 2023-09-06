@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,7 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<RootNamespace>SubredditStats.Frontend.ConsoleClient</RootNamespace>
-	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>	  
+	<DockerfileFile>..\..\Dockerfile.consoleclient</DockerfileFile>
+	<DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
