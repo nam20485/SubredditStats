@@ -22,10 +22,10 @@ namespace Tests
         }
      
         [Theory]
-        [InlineData(SubRedditPostStatsClient.AllPostsEndpoint)]
-        [InlineData(SubRedditPostStatsClient.TopPostsEndpoint)]
-        [InlineData(SubRedditPostStatsClient.MostPostersEndpoint)]
-        public async Task Test_Endpoints_Return_Http200(string uri)
+        [InlineData(SubRedditPostStatsApiClient.AllPostsEndpoint)]
+        [InlineData(SubRedditPostStatsApiClient.TopPostsEndpoint)]
+        [InlineData(SubRedditPostStatsApiClient.MostPostersEndpoint)]
+        public async Task Endpoints_ShouldReturnHttp200(string uri)
         {
             using var httpClient = _webApplicationFactory.CreateClient();
 
@@ -37,10 +37,10 @@ namespace Tests
         }
 
         [Theory]
-        [InlineData(SubRedditPostStatsClient.AllPostsEndpoint, typeof(PostInfo[]))]
-        [InlineData(SubRedditPostStatsClient.TopPostsEndpoint, typeof(PostInfo[]))]
-        [InlineData(SubRedditPostStatsClient.MostPostersEndpoint, typeof(MostPosterInfo[]))]
-        public async Task Test_EndpointResponsesShouldDeserializeIntoCorrectTypes(string uri, Type responseType)
+        [InlineData(SubRedditPostStatsApiClient.AllPostsEndpoint, typeof(PostInfo[]))]
+        [InlineData(SubRedditPostStatsApiClient.TopPostsEndpoint, typeof(PostInfo[]))]
+        [InlineData(SubRedditPostStatsApiClient.MostPostersEndpoint, typeof(MostPosterInfo[]))]
+        public async Task EndpointResponses_ShouldDeserializeIntoCorrectTypes(string uri, Type responseType)
         {
             using var httpClient = _webApplicationFactory.CreateClient();
 
@@ -58,16 +58,45 @@ namespace Tests
             result.Should().BeOfType(responseType);
         }
 
-        // inject a fake service into the controller that WebApplicaitonFactory uses
-        //// Arrange
-        //var client = _factory.WithWebHostBuilder(builder =>
-        //{
-        //    builder.ConfigureTestServices(services =>
-        //    {
-        //        services.AddScoped<IQuoteService, TestQuoteService>();
-        //    });
-        //})
-        //    .CreateClient();
+        [Fact]
+        public async Task Endpoints_Swagger_ShouldReturnHttp200()
+        {
+            var uri = "swagger/index.html";
 
-    }
+            using var httpClient = _webApplicationFactory.CreateClient();
+
+            using var response = await httpClient.GetAsync(uri);
+
+            response.Should().NotBeNull();
+            response.Should().BeSuccessful();
+            response.Should().Be200Ok();
+        }
+
+
+        [Fact]
+        public async Task Endpoints_Redoc_ShouldReturnHttp200()
+        {
+            var uri = "redoc/index.html";
+
+            using var httpClient = _webApplicationFactory.CreateClient();
+
+            using var response = await httpClient.GetAsync(uri);
+
+            response.Should().NotBeNull();
+            response.Should().BeSuccessful();
+            response.Should().Be200Ok();
+        }
+
+            // inject a fake service into the controller that WebApplicaitonFactory uses
+            //// Arrange
+            //var client = _factory.WithWebHostBuilder(builder =>
+            //{
+            //    builder.ConfigureTestServices(services =>
+            //    {
+            //        services.AddScoped<IQuoteService, TestQuoteService>();
+            //    });
+            //})
+            //    .CreateClient();
+
+        }
 }
