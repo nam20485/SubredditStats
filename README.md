@@ -22,7 +22,7 @@ Backend Web API application to collect and serve statistics about a given subred
 
 Run this first. It will start the Web API server listening at <https://localhost:7199>. Once it starts, it begins collecting statistics for the subreddit specified. Select the `Release` configuration and run the Web API project.
 
->You may need to set the Web Api project as the startup project the first time you run it.
+>You may need to set the Web Api project as the startup project before the first time you run it.
 
 If you have not set the client credentials environment variables, you will get an exception message in the console output.
 
