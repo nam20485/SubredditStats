@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 
+using Microsoft.AspNetCore.Builder;
+
 using SubredditStats.Backend.Lib.RedditApi;
 using SubredditStats.Backend.Lib.Store;
 using SubredditStats.Backend.Lib.Utils;
@@ -30,7 +32,7 @@ namespace SubredditStats.Backend.WebApi
             });       
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.ConfigureSwagger();            
 
             // add our custom services to the DI container (each separate functionality is 
             // implemented in its own service to reduce coupling and increase cohesion & encapsulation)
@@ -67,7 +69,12 @@ namespace SubredditStats.Backend.WebApi
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.ConfigureSwaggerUI();
+                app.UseReDoc(options =>
+                {
+                    options.DocumentTitle = "Subreddit Post Stats API Documentation";                                
+                });
+                app.UseHttpLogging();
             }
 
             app.UseResponseCompression();
