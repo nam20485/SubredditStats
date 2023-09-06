@@ -14,15 +14,13 @@ Backend Web API application to collect and serve statistics about a given subred
 1. Specify the subreddit you would like to collect stats on:
     1. Edit the `SubredditName` value in the `appsettings.json` file in the Backend project. (`\Backend\WebApi\appsettings.json`).
 
->*Alternatively, you can set the `SPS_SUBREDDIT_NAME` environment variable to the name of the subreddit you would like to collect stats on.*
-
 >Remember to set the environment variables **before** you run the command prompt or open Visual Studio. If they are already open, you **must close and restart them** for them to be able to see the changes to your envionment variables!
 
 ### Backend
 
 .NET Core 7 ASP.NET Core Web API application.
 
-Run this first. It will start the Web API server on <https://localhost:7199>. Once it starts, it begins collecting statistics for the subreddit specified. Select the `Release` configuration and run the Web API project.
+Run this first. It will start the Web API server listening at <https://localhost:7199>. Once it starts, it begins collecting statistics for the subreddit specified. Select the `Release` configuration and run the Web API project.
 
 >You may need to set the Web Api project as the startup project the first time you run it.
 
