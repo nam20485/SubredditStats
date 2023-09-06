@@ -10,7 +10,7 @@ namespace SubredditStats.Frontend.ConsoleClient
 {
     internal class PostStatsAppCliArguments : CliArguments
     {
-        private const string DefaultApiUrl = "https://localhost:7199";
+        private const string DefaultApiUrl = "http://localhost:5159/";
         private const int DefaultPostCount = 5;
 
         //internal bool AllPosts => GetArgumentValueForCallableName<bool>();
